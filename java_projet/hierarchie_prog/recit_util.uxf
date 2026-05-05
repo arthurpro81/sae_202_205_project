@@ -5,12 +5,12 @@
   <element>
     <id>UMLActor</id>
     <coordinates>
-      <x>30</x>
+      <x>20</x>
       <y>90</y>
-      <w>60</w>
+      <w>80</w>
       <h>110</h>
     </coordinates>
-    <panel_attributes>Actor</panel_attributes>
+    <panel_attributes>Utilisateur</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
