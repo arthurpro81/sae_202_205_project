@@ -41,3 +41,28 @@ public class Polynome {
         return "Polynome[" + resultat + "]";
     }
 }
+
+public class PolynomeBis {
+	
+	public PolynomeBis(double[] composantes) {
+		if (composantes == null || composantes.length == 0) {
+			//TODO
+		}
+	}
+	
+	public int degres() {}
+	
+	public double coefficient() {}
+	
+	public double racine() {}
+	
+	public double limite() {}
+	
+	public void getPolynome() {}
+	
+	public void setPolynome() {}
+	
+	public void toString() {}
+	
+	
+}
