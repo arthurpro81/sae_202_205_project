@@ -1,4 +1,12 @@
+/**
+ * TestPolynome.java											05/05/2026
+ * IUT Toulouse Captiole no copyright(copyleft )
+ */
 package iut.sae.polynome;
+
+//lorsque les test ne seont plus dans le meme fichier mettre : package iut.sae.polynome.test;
+
+import java.lang.*;
 
 /**
  * Classe de test pour vérifier si la création de polynomes fonctionne.
@@ -15,15 +23,15 @@ public class TestPolynome {
         try {
             testCreationValide();
             System.out.println("Test création valide : OK");
-        } catch (Exception e) {
-            System.err.println("ERREUR sur le test de création valide : " + e.getMessage());
+        } catch (Exception echecAnormal) {
+            System.err.println("ERREUR sur le test de création valide : " + echecAnormal.getMessage());
         }
 
         try {
             testCreationInvalide();
             System.out.println("Test création invalide : OK (l'erreur a bien été détectée)");
-        } catch (Exception e) {
-            System.err.println("ERREUR sur le test de création invalide : " + e.getMessage());
+        } catch (Exception echecAnormal) {
+            System.err.println("ERREUR sur le test de création invalide : " + echecAnormal.getMessage());
         }
 
         System.out.println("Fin des tests.");
@@ -33,9 +41,9 @@ public class TestPolynome {
      * Vérifie qu'on peut créer un polynôme normalement.
      */
     private void testCreationValide() throws Exception {
-        double[] c = {1.0, 2.0};
-        Polynome p = new Polynome(c);
-        if (p.getCoefficients() == null) {
+        double[] monomesTest = {1.0, 2.0};
+        Polynome polynomeTest = new Polynome(monomesTest);
+        if (polynomeTest.getMonomes() == null) {
             throw new Exception("Le polynôme a été créé mais les coefficients sont nuls !");
         }
     }
@@ -47,7 +55,7 @@ public class TestPolynome {
         try {
             new Polynome(null);
             throw new Exception("Le programme aurait dû afficher une erreur pour un tableau nul !");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException attendue) {
             // C'est normal, le test a réussi car l'erreur a été détectée
         }
     }
