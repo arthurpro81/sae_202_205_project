@@ -18,11 +18,11 @@ public class Main {
         testeur.lancerTests();
        
         // Test methode ToString FIXME elle marche pas - voir dans classe Polynome
-        /*
-        double[] monomesTestAffichage = {1.0, 2.0};
+        
+        double[] monomesTestAffichage = {1.0, 2.0, 3.0};
         Polynome polynomeTestAffichage = new Polynome(monomesTestAffichage);
         
         polynomeTestAffichage.toString();
-        */
+        
     }
 }

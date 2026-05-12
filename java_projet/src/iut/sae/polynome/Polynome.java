@@ -111,19 +111,23 @@ public class Polynome {
 	}
     
     
-    /*
+    
     /**
      * 
      * V1 ToString By Flo
      * Affiche le polynôme sous forme de texte simple.
-     
-    @Override
+     */
+	/*
+	@Override
     public String toString() {
-        String resultat = "";
-        for (int parcour = 0; parcour < coefficients.length; parcour++) {
-            resultat += coefficients[parcour];
+        String resultat = "",
+               message = "";
+        
+        for (int parcour = 0; parcour < Monomes.length; parcour++) {
+            resultat += Monomes[parcour];
         }
-        return "Polynome[" + resultat + "]";
+        message = "Polynome[ " + resultat + " ]";		//val intermédiaire
+        return message;
     }
     */
 	
