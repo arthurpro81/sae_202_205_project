@@ -43,8 +43,17 @@ public class Polynome {
 	 * 
 	 */
 	public int degres() {
-		return 0;
-	}
+        // On parcourt le tableau de gauche à droite (des plus hautes puissances vers les constantes)
+        for (int i = 0; i < Monomes.length; i++) {
+            // Dès qu'on trouve un coefficient qui n'est pas zéro
+            if (Monomes[i] != 0.0) {
+                // Le degré correspond à la puissance maximale moins l'indice actuel
+                return Monomes.length - 1 - i;
+            }
+        }
+        // Si la boucle se termine sans rien trouver, c'est que le tableau ne contient que des 0.0
+        return -1; 
+    }
 	
 	/*
 	 * 
