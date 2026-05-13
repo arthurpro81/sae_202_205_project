@@ -5,6 +5,7 @@
 package iut.sae.polynome;
 
 import java.util.*;
+import java.util.regex.*;
 
 /*
  * Classe Polynome
@@ -22,22 +23,26 @@ import java.util.*;
  */
 public class Polynome {
 	
-	/*Tableau polynome composer de monomes (=éléments du tabl)*/
-	private double[] Monomes;
-	
-	/**
-	 * Constructeur : 
-	 * crée un polynôme à partir d'un tableau de Monomes.
-     * @param monomes Tableau de coefficients (ex: {3.0, 2.0, 1.0} pour 3x^2 + 2x + 1)
-     * @throws IllegalArgumentException si le tableau est nul ou vide.
-	 */
-	// TODO faire une boucle for pour récupérer chaques élément du tableau (récup chaques monomes)
-	public Polynome(double[] monomes) {
-		if (monomes == null || monomes.length == 0) {
-            throw new IllegalArgumentException("Erreur : Le tableau de coefficients ne peut pas être vide !");
-        }
-        this.Monomes = monomes;
-	}
+	//tableau oû sera stocker les monômes récupéré grace à la méthode getMonomes()
+    private String Monomes[];
+
+    // polynome saisie par l'utilisateur sous le format : 3x^2 + 7x^1 +5
+    private String polynome;
+
+    /**
+     * Constructeur de polynômes
+     * @param polynome - polynômes rentrer par l'uti 
+     * @throws IllegalArgumentException si le polynôme rentrer est nul (="0") ou vide(="").
+     */
+     public Polynome(String polynome) {
+    	 String regex = "^(?:\\d*x(?:\\^\\d+)?|\\d+)(?:\\s?[+\\-]\\s?(?:\\d*x(?:\\^\\d+)?|\\d+))*$";
+         // Sortie Err 
+    	 // Si la saisie rentrer contient des cara autre  que : "0-9|x|[:space]|^|+|-"	-> regex : ^(?:\d*x(?:\^\d+)?|\d+)(?:\s?[+\-]\s?(?:\d*x(?:\^\d+)?|\d+))*$
+    	 if (!polynome.matches(regex)) {
+    	     throw new IllegalArgumentException("Erreur : caracteres inconnues ou caractere 'x' absent");
+    	 }
+    	this.polynome = polynome;
+      }
 	
 	/*
 	 * 
@@ -68,13 +73,30 @@ public class Polynome {
 	}
 	
 	
-	/*	Getter
-	 * @return Monomes[] renvoie un tableau représentant le polynome 
-	 *        		   composé d'élément qui sont les coef des monomes.
-	 */
-	 public double[] getMonomes() {
-	        return this.Monomes;
-	 }	
+    /**
+     * Getter
+     * Méthode imuable de récupération de monomes à partir d'un objet polynome
+     * ex : Polynome(3x^3+5x-10).getMonome() -> {3x^3, 5x, -10}
+     * @return - liste de monomes du polynomes
+     */
+    //TODO format à retravailler : ex Polynome(3x^3+7x-10).getMonomes()  --> {3x^3+, 7x-, 10}   ->ERR 
+	public  String[] getMonomes() {
+	   // Parcours chaques caracteres du polynome -> STOP quand parcourut tout les caracteres 
+	   // Si caractere == + ou - alors prendre carac parcouruts  mettre dans une variable de 		   stockage et mettre cette variable dans le tableau Monomes[]
+	
+	   for (int parcoursDeCaractere = 0, indiceTableau = -1, String stockageDeCaractere,
+		    String recuperationDeCaractereActuel; parcoursDeCaractere < polynome.length(); parcoursDeCaractere++) {
+		
+		   recuperationDeCaractereActuel = ;	// TODO mettre le carac actuel evaluer dedans 
+		   stockageDeCaractere += recuperationDeCaractereActuel;
+		   if (recuperationDeCaractereActuel == "+" || recuperationDeCaractereActuel == '-') {
+			
+			   this.Monomes[indiceTableau +1] = stockageDeCaractere;
+			   stockageDeCaractere = "";	// Vidage
+		   }
+	   }
+	   return this.Monomes;
+	}	
 	
 	/* Setter
 	 * @return 
@@ -95,7 +117,7 @@ public class Polynome {
     @Override
 	public String toString() {
 		 String message = "";	//STUB
-	        for (int parcour = 0, puissance = Monomes.length -1; parcour <= Monomes.length; parcour++, puissance--) {
+	        for (int parcour = 0, puissance = Monomes.length -1; parcour < Monomes.length; parcour++, puissance--) {
 	        
 	            message += " (" + Monomes[parcour];
 	            // l'indice parcours les coef multi des X
@@ -130,6 +152,7 @@ public class Polynome {
         return message;
     }
     */
-	
+	 	
+     
 	
 }
