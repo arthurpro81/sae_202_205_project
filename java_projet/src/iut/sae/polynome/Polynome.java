@@ -63,9 +63,32 @@ public class Polynome {
 	/*
 	 * 
 	 */
-	public double limite() {
-		return 0;
+	public String limite(char limite) {
+		if (limite != '+' || limite != '-') {
+			throw new IllegalArgumentException("Erreur : L'étude de limite de cette version ne peut être que '+' ou '-' !");
+		}
+		double degrMax = Monomes[0];
+		String reponse = " "; // initialisation pour passer le packetage
+		if (limite == '+' ) {
+			if (degrMax < 0) {
+				reponse = "-infini";
+			} else {
+				reponse = "+infini";
+			}
+		} else {
+			if (degrMax < 0 && degrMax/2 == 0) {
+				reponse ="-infini";
+			} else if (degrMax < 0 && degrMax/2 != 0) {
+				reponse ="+infini";
+			} else if (degrMax > 0 && degrMax/2 == 0) {
+				reponse ="+infini";
+			} else if (degrMax > 0 && degrMax/2 != 0) {
+				reponse ="-infini";
+			}
+		}
+		return reponse;
 	}
+		
 	
 	
 	/*	Getter
