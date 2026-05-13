@@ -33,6 +33,18 @@ public class TestPolynome {
         } catch (Exception echecAnormal) {
             System.err.println("ERREUR sur le test de création invalide : " + echecAnormal.getMessage());
         }
+        try {
+        	testLimitesValide();
+        	 System.out.println("Test Limites valide : OK");
+        } catch (Exception echecAnormal) {
+        	System.err.println("ERREUR sur le test de limite valide : " + echecAnormal.getMessage());
+        }
+        try {
+        	testLimitesInvalide();
+        	 System.out.println("Test Limites invalide : OK");
+        } catch (Exception echecAnormal) {
+        	System.err.println("ERREUR sur le test de limite invalide : " + echecAnormal.getMessage());
+        }
 
         System.out.println("Fin des tests.");
     }
@@ -99,7 +111,7 @@ public class TestPolynome {
      */
     private void testLimitesInvalide() {
     	double[][] monomeTestInvalide = {
-    			{(Double) null, 5.0, -2.0},
+    			{},
     			{},
     			{6.0, -12.0, 9.0},
     			{-30.0, 0.0, 1.0}

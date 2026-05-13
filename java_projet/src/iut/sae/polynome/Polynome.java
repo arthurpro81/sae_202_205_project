@@ -65,7 +65,7 @@ public class Polynome {
 	 */
 	// partie créées par amaury
 	public String limite(char limite) {
-		if (limite != '+' || limite != '-') {
+		if (limite != '+' && limite != '-') {
 			throw new IllegalArgumentException("Erreur : L'étude de limite de cette version ne peut être que '+' ou '-' !");
 		}
 		double degrMax = Monomes[0];
