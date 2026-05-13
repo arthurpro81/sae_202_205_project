@@ -59,4 +59,83 @@ public class TestPolynome {
             // C'est normal, le test a réussi car l'erreur a été détectée
         }
     }
+    
+
+
+
+        /**
+         * Teste la création de polynômes avec différents jeux de racines
+         */
+        private void testRacinesValides() {
+            // Jeu de données : {coeffLeader, racine1, mult1, racine2, mult2...}
+            // Pour simplifier en BUT1, on va tester des cas fixes
+            
+            System.out.println("Test de création :");
+
+            // Cas 1 : (x - 2)
+            Polynome p1 = new Polynome(1.0, new double[]{2.0}, new int[]{1});
+            afficherResultat("P(x) = x - 2", p1.toString().contains("2.0") && p1.toString().contains("1.0"));
+
+            // Cas 2 : (x - 1)^2 = x^2 - 2x + 1
+            Polynome p2 = new Polynome(1.0, new double[]{1.0}, new int[]{2});
+            afficherResultat("P(x) = (x - 1)^2", p2.toString().contains("1.0") && p2.toString().contains("2.0"));
+
+            // Cas 3 : 2(x - 3)(x + 3) = 2x^2 - 18
+            Polynome p3 = new Polynome(2.0, new double[]{3.0, -3.0}, new int[]{1, 1});
+            afficherResultat("P(x) = 2(x-3)(x+3)", p3.toString().contains("18.0"));
+            
+            // Cas 4 : 4(x - 1)^7
+            Polynome p4 = new Polynome(4.0, new double[]{1.0}, new int[]{7});
+            afficherResultat("P(x) = 4(x - 1)^7", p4.toString().contains("4.0x^7"));
+        }
+
+        /**
+         * Vérifie que P(racine) est bien égal à 0
+         */
+        private void testEvaluationSurRacines() {
+            // On définit des racines à tester
+            double[][] lesRacines = {
+                {2.0},          // Test 1
+                {1.0},          // Test 2
+                {3.0, -3.0},    // Test 3
+                {1.0}           // Test 4
+            };
+            
+            int[][] lesMult = {
+                {1},
+                {2},
+                {1, 1},
+                {7}
+            };
+
+            double[] lesCoeffsLeaders = {1.0, 1.0, 2.0,4.0};
+
+            for (int i = 0; i < lesRacines.length; i++) {
+                Polynome p = new Polynome(lesCoeffsLeaders[i], lesRacines[i], lesMult[i]);
+                
+                System.out.println("Vérification du polynôme : " + p);
+                
+                for (double racine : lesRacines[i]) {
+                    double result = p.calculer(racine);
+                    // En informatique, avec les double, on teste si c'est très proche de 0
+                    boolean ok = Math.abs(result) < 1e-9; 
+                    afficherResultat("  Vérification racine " + racine, ok);
+                    if (!ok) {
+                        System.out.println("    ECHEC : P(" + racine + ") = " + result);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Utilitaire pour afficher proprement le succès ou l'échec
+         */
+        private void afficherResultat(String nomTest, boolean succes) {
+            if (succes) {
+                System.out.println("[ OK ] " + nomTest);
+            } else {
+                System.out.println("[ERREUR] " + nomTest);
+            }
+        }
+    }
 }
