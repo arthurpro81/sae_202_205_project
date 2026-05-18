@@ -5,7 +5,7 @@
 package iut.sae.polynome;
 
 import java.util.*;
-import java.util.regex.*;
+
 
 /*
  * Classe Polynome
@@ -80,7 +80,7 @@ public class Polynome {
      * @return - liste de monomes du polynomes
      */
 	//TODO : conflict ArrayList (monomes) with String (getMomones)
-	public  String getMonomes() {
+	public  ArrayList<String> getMonomes() {
 	   // Parcours chaques caracteres du polynome -> STOP quand parcourut tout les caracteres 
 	   // Si caractere == + ou - alors prendre carac parcouruts  mettre dans une variable de 		   stockage et mettre cette variable dans le tableau Monomes[]
 	   
