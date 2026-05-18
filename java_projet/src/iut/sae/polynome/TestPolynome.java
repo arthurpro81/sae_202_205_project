@@ -42,17 +42,16 @@ public class TestPolynome {
     private void testCreationValide() throws Exception {
     	String[][] valide = {
     	//TODO inserer des valeurs de test
-    			{""},   // BUG : le prog considere que c'est ok
-    			{"3s"}, // BUG : le prog considere que c'est ok 
-    			{"3x"}, // BUG : le prog considere que c'est pas ok 
+    			{"3x"}, 
+    			{"3x^2"}, 
+    			{"3x^10-9x^2-3"} 
     	};
     	for (int numeroTest = 0; numeroTest < valide.length; numeroTest++) {
     		try {
     			String[] combinaison = valide[numeroTest];
     			new Polynome(combinaison[0]);
-    			throw new Exception("ERR combinaison invalide : " + numeroTest);
     		} catch (IllegalArgumentException attendue) {
-    			//Test ok 
+    			throw new Exception("ERR combinaison invalide indice : " + numeroTest); 
     		}
     	}
     }
@@ -72,7 +71,7 @@ public class TestPolynome {
     		try {
     			String[] combinaison = invalide[numeroTest];
     			new Polynome(combinaison[0]);
-    			throw new Exception("ERR combinaison valide : " + numeroTest);
+    			throw new Exception("ERR combinaison valide indice : " + numeroTest);
     		} catch (IllegalArgumentException attendue) {
     			// C'est normal, le test a réussi car l'erreur a été détectée
     		}
