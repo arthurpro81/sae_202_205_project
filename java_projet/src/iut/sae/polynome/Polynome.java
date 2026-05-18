@@ -23,8 +23,8 @@ import java.util.regex.*;
  */
 public class Polynome {
 	
-	//tableau oû sera stocker les monômes récupéré grace à la méthode getMonomes()
-    private String Monomes[];
+	//Liste oû sera stocker les monômes récupéré grace à la méthode getMonomes()
+	private ArrayList<String> monomes = new ArrayList<>();
 
     // polynome saisie par l'utilisateur sous le format : 3x^2 + 7x^1 +5
     private String polynome;
@@ -79,80 +79,50 @@ public class Polynome {
      * ex : Polynome(3x^3+5x-10).getMonome() -> {3x^3, 5x, -10}
      * @return - liste de monomes du polynomes
      */
-    //TODO format à retravailler : ex Polynome(3x^3+7x-10).getMonomes()  --> {3x^3+, 7x-, 10}   ->ERR 
-	public  String[] getMonomes() {
+	//TODO : conflict ArrayList (monomes) with String (getMomones)
+	public  String getMonomes() {
 	   // Parcours chaques caracteres du polynome -> STOP quand parcourut tout les caracteres 
 	   // Si caractere == + ou - alors prendre carac parcouruts  mettre dans une variable de 		   stockage et mettre cette variable dans le tableau Monomes[]
-	
-	   for (int parcoursDeCaractere = 0, indiceTableau = -1, String stockageDeCaractere,
-		    String recuperationDeCaractereActuel; parcoursDeCaractere < polynome.length(); parcoursDeCaractere++) {
+	   
+	   String stockageDeCaractere = "";				//STUB
+	   char recuperationDeCaractereActuel;	//STUB
+	   for (int parcoursDeCaractere = 0; parcoursDeCaractere < this.polynome.length() - 1; parcoursDeCaractere++) {
 		
-		   recuperationDeCaractereActuel = ;	// TODO mettre le carac actuel evaluer dedans 
-		   stockageDeCaractere += recuperationDeCaractereActuel;
-		   if (recuperationDeCaractereActuel == "+" || recuperationDeCaractereActuel == '-') {
+		   recuperationDeCaractereActuel = this.polynome.charAt(parcoursDeCaractere);	//récupération du carac actuel évaluer 
+		   if (recuperationDeCaractereActuel != '+' || recuperationDeCaractereActuel != '-') {
+			   
+			   stockageDeCaractere += recuperationDeCaractereActuel;
+		   } else {
 			
-			   this.Monomes[indiceTableau +1] = stockageDeCaractere;
-			   stockageDeCaractere = "";	// Vidage
+			   this.monomes.add(stockageDeCaractere);
+			   if (recuperationDeCaractereActuel == '+') {
+				   stockageDeCaractere = "";
+			   } else {
+				   stockageDeCaractere = "-";
+			   }
 		   }
 	   }
-	   return this.Monomes;
+	   return this.monomes;
 	}	
 	
 	/* Setter
-	 * @return 
-	 * 
+	 * Met à jour la liste 'monomes' en ajoutant à l'indice donnée le monome souhaité 
+	 * @param monomeAAjouter - monome que l'on souhaite insérer
+	 * @parm indiceList - indice de la liste oû placer le monome à ajouter
 	 */
-	public int setMonomes() {
-		return 0;			//STUB
+	public void setMonomes(String monomeAAjouter, int indiceList) {
+		this.monomes.set(indiceList, monomeAAjouter);
 	}
 	
-	
-	
-	
+
     /**
      * Affichage du polynôme sous forme de texte simple.
-     * Format : Polynome[ (3x^2) + (-6x^1) + (7) ]
+     * Format : Polynome(3x^2+2x^1+10).toString() -> 3x^2+2x^1+10
+     * @return messageAffiche - affichage du polynome sous Format 
      */
-	//TODO FIX : check que Monomes.length est possible sinon faire this.Monomes.length
     @Override
 	public String toString() {
-		 String message = "";	//STUB
-	        for (int parcour = 0, puissance = Monomes.length -1; parcour < Monomes.length; parcour++, puissance--) {
-	        
-	            message += " (" + Monomes[parcour];
-	            // l'indice parcours les coef multi des X
-	            if (parcour < Monomes.length) {
-	            	message += "x^" + puissance + ") +";
-	            } 
-	            // l'indice est en train de parcourir la const 
-	            else {
-	            	message += ") ";
-	            }
-	        }
-	        return "Polynome[" + message + "]";
-	}
-    
-    
-    
-    /**
-     * 
-     * V1 ToString By Flo
-     * Affiche le polynôme sous forme de texte simple.
-     */
-	/*
-	@Override
-    public String toString() {
-        String resultat = "",
-               message = "";
-        
-        for (int parcour = 0; parcour < Monomes.length; parcour++) {
-            resultat += Monomes[parcour];
-        }
-        message = "Polynome[ " + resultat + " ]";		//val intermédiaire
-        return message;
-    }
-    */
-	 	
-     
-	
+		 String messageAffiche = this.polynome;
+		 return messageAffiche;
+	}	
 }
