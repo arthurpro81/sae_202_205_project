@@ -45,13 +45,12 @@ public class Polynome {
     	this.polynome = polynome;
       }
 	
-	/*
-	 * 
+	/* Méthode recherchant les degres du polynome et renvoyant sont degres le plus haut
+	 * @return degMax - renvoie le degres max du polynome sous la forme d'un int 
 	 */
 	public int degres() {
 	    int degMax = 0;
-	    String monomeDegMax = "";	//STUB
-
+	    String monomeDegMax;
 	    for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
 
 	        String monomeActuel = this.monomes.get(indiceDuMonome);
@@ -76,8 +75,14 @@ public class Polynome {
 	/*
 	 * 
 	 */
-	public ArrayList<Double> coefficient() {
-		return 0;
+	public ArrayList<String> coefficient() {
+		ArrayList<String> coefficient = new ArrayList<>();
+		for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
+			String monomeActuel = this.monomes.get(indiceDuMonome);
+			monomeActuel = monomeActuel.replaceAll("x.*", "");
+			coefficient.add(monomeActuel);
+		}
+		return coefficient;
 	}
 	
 	/*
