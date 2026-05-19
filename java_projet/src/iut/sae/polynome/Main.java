@@ -22,6 +22,7 @@ public class Main {
         Polynome polynomeTestAffichage = new Polynome("3x^2 + 3x^10 - 23x^2 - 112");
         System.out.println("Affichage du polynome : " + polynomeTestAffichage.toString());
         System.out.println("Affichage de sa liste de monomes : " + polynomeTestAffichage.getMonomes());
+        System.out.println("Affichage de sa liste de monomes : " + polynomeTestAffichage.getMonomes());
         System.out.println("Affichage de sont degres : " + polynomeTestAffichage.degres());
         System.out.println("Affichage de s liste de ses coefficient : " + polynomeTestAffichage.coefficient());
     }

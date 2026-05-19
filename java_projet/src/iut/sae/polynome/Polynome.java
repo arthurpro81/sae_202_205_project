@@ -43,8 +43,34 @@ public class Polynome {
     	     throw new IllegalArgumentException("Erreur : caracteres inconnues ou caractere 'x' absent");
     	 }
     	this.polynome = polynome;
+    	this.remplirMonomes();
       }
 	
+    /*
+     * Méthode appelée par le constructeur à chaque création d'objet Polynome.
+     * Méthode permétant de remplir directement this.monomes avec les monomes du polynome
+     */
+	private void remplirMonomes() {
+		   String stockageDeCaractere = "";				//STUB
+		   char recuperationDeCaractereActuel;
+		   String polyNoSpace = this.polynome.replaceAll("\\s+", "");
+		   
+		   for (int parcoursDeCaractere = 0; parcoursDeCaractere < polyNoSpace.length(); parcoursDeCaractere++) {
+			
+			   recuperationDeCaractereActuel = polyNoSpace.charAt(parcoursDeCaractere);	//récupération du carac actuel évaluer 
+			   
+			   if (recuperationDeCaractereActuel != '+' && recuperationDeCaractereActuel != '-') {
+				   stockageDeCaractere += recuperationDeCaractereActuel;
+			   } else {
+				   this.monomes.add(stockageDeCaractere);
+				   stockageDeCaractere = (recuperationDeCaractereActuel == '-') ? "-" : "";
+			   }
+		   }
+		   if (!stockageDeCaractere.isEmpty()) {
+		       this.monomes.add(stockageDeCaractere);
+		   }
+	}
+
 	/* Méthode recherchant les degres du polynome et renvoyant sont degres le plus haut
 	 * @return degMax - renvoie le degres max du polynome sous la forme d'un int 
 	 */
@@ -89,7 +115,7 @@ public class Polynome {
 	 * 
 	 */
 	public ArrayList<Integer> racine() {
-		return 0;
+		return null;	//STUB
 	}
 	
 	/*
@@ -103,43 +129,17 @@ public class Polynome {
     /**
      * Getter
      * Méthode imuable de récupération de monomes à partir d'un objet polynome
-     * ex : Polynome(3x^3 +5x- 10).getMonome() -> {3x^3, 5x, -10}
-     * @return - liste de monomes du polynomes
+     * ex : Polynome(3x^3 +5x- 10).getMonome() -> [3x^3, 5x, -10]
+     * @return - liste des monomes du polynomes
      */
-	//TODO : conflict ArrayList (monomes) with String (getMomones)
 	public  ArrayList<String> getMonomes() {
-	   // Parcours chaques caracteres du polynome -> STOP quand parcourut tout les caracteres 
-	   // Si caractere == + ou - alors prendre carac parcouruts  mettre dans une variable de 		   stockage et mettre cette variable dans le tableau Monomes[]
-	   
-	   String stockageDeCaractere = "";				//STUB
-	   char recuperationDeCaractereActuel;	        //STUB
-	   this.polynome = this.polynome.replaceAll("\\s+", "");
-	   for (int parcoursDeCaractere = 0; parcoursDeCaractere < this.polynome.length(); parcoursDeCaractere++) {
-		
-		   recuperationDeCaractereActuel = this.polynome.charAt(parcoursDeCaractere);	//récupération du carac actuel évaluer 
-		   if (recuperationDeCaractereActuel != '+' && recuperationDeCaractereActuel != '-') {
-			   
-			   stockageDeCaractere += recuperationDeCaractereActuel;
-		   } else {
-			
-			   this.monomes.add(stockageDeCaractere);
-			   if (recuperationDeCaractereActuel == '+') {
-				   stockageDeCaractere = "";
-			   } else {
-				   stockageDeCaractere = "-";
-			   }
-		   }
-	   }
-	   if (!stockageDeCaractere.isEmpty()) {
-	       this.monomes.add(stockageDeCaractere);
-	   }
-	   return this.monomes;
+	    return this.monomes;
 	}	
 	
 	/* Setter
 	 * Met à jour la liste 'monomes' en ajoutant à l'indice donnée le monome souhaité 
 	 * @param monomeAAjouter - monome que l'on souhaite insérer
-	 * @parm indiceList - indice de la liste oû placer le monome à ajouter
+	 * @param indiceList - indice de la liste oû placer le monome à ajouter
 	 */
 	public void setMonomes(String monomeAAjouter, int indiceList) {
 		this.monomes.set(indiceList, monomeAAjouter);
