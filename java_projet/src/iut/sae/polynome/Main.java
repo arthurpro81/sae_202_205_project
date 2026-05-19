@@ -16,9 +16,7 @@ public class Main {
         // Lancement des tests pour vérifier que tout marches
         TestPolynome testeur = new TestPolynome();
         testeur.lancerTests();
-       
-        
-   
+
         Polynome polynomeTestAffichage = new Polynome("3x^2 + 3x^10 - 23x^2 - 112");
         System.out.println("Affichage du polynome : " + polynomeTestAffichage.toString());
         System.out.println("Affichage de sa liste de monomes : " + polynomeTestAffichage.getMonomes());

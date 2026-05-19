@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.regex.*;
 
 
+
 /*
  * Classe Polynome
  * Explication d'un polynome :
@@ -44,7 +45,7 @@ public class Polynome {
     	 }
     	this.polynome = polynome;
       }
-	
+  
 	/* Méthode recherchant les degres du polynome et renvoyant sont degres le plus haut
 	 * @return degMax - renvoie le degres max du polynome sous la forme d'un int 
 	 */
@@ -103,7 +104,7 @@ public class Polynome {
     /**
      * Getter
      * Méthode imuable de récupération de monomes à partir d'un objet polynome
-     * ex : Polynome(3x^3 +5x- 10).getMonome() -> {3x^3, 5x, -10}
+     * ex : Polynome(3x^3+5x-10).getMonome() -> {3x^3, 5x, -10}
      * @return - liste de monomes du polynomes
      */
 	//TODO : conflict ArrayList (monomes) with String (getMomones)
