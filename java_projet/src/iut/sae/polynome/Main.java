@@ -17,12 +17,12 @@ public class Main {
         TestPolynome testeur = new TestPolynome();
         testeur.lancerTests();
        
-        // Test methode ToString FIXME elle marche pas - voir dans classe Polynome
-        /*
-        double[] monomesTestAffichage = {1.0, 2.0, 3.0};
-        Polynome polynomeTestAffichage = new Polynome(monomesTestAffichage);
         
-        polynomeTestAffichage.toString();
-        */
+   
+        Polynome polynomeTestAffichage = new Polynome("3x^2+3x^10-10");
+        System.out.println(polynomeTestAffichage.toString());
+        System.out.println(polynomeTestAffichage.getMonomes());
+        System.out.println(polynomeTestAffichage.degres());
+ 
     }
 }

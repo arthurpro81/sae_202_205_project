@@ -5,6 +5,7 @@
 package iut.sae.polynome;
 
 import java.util.*;
+import java.util.regex.*;
 
 
 /*
@@ -48,20 +49,41 @@ public class Polynome {
 	 * 
 	 */
 	public int degres() {
+	    int degMax = 0;
+	    String monomeDegMax = "";	//STUB
+
+	    for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
+
+	        String monomeActuel = this.monomes.get(indiceDuMonome);
+
+	        // Pattern qui cherche ^ suivi d'un ou plusieurs chiffres
+	        Pattern patternExposant = Pattern.compile("\\^(\\d+)");
+	        Matcher matcherExposant = patternExposant.matcher(monomeActuel);
+
+	        if (matcherExposant.find()) {
+	            // group(1) récupère uniquement les chiffres après le ^
+	            int exposantActuel = Integer.parseInt(matcherExposant.group(1));
+
+	            if (exposantActuel > degMax) {
+	                degMax    = exposantActuel;
+	                monomeDegMax = monomeActuel;
+	            }
+	        }
+	    }
+		return degMax;
+	}
+	
+	/*
+	 * 
+	 */
+	public ArrayList<Double> coefficient() {
 		return 0;
 	}
 	
 	/*
 	 * 
 	 */
-	public double coefficient() {
-		return 0;
-	}
-	
-	/*
-	 * 
-	 */
-	public double racine() {
+	public ArrayList<Integer> racine() {
 		return 0;
 	}
 	
@@ -76,7 +98,7 @@ public class Polynome {
     /**
      * Getter
      * Méthode imuable de récupération de monomes à partir d'un objet polynome
-     * ex : Polynome(3x^3+5x-10).getMonome() -> {3x^3, 5x, -10}
+     * ex : Polynome(3x^3 +5x- 10).getMonome() -> {3x^3, 5x, -10}
      * @return - liste de monomes du polynomes
      */
 	//TODO : conflict ArrayList (monomes) with String (getMomones)
@@ -85,11 +107,12 @@ public class Polynome {
 	   // Si caractere == + ou - alors prendre carac parcouruts  mettre dans une variable de 		   stockage et mettre cette variable dans le tableau Monomes[]
 	   
 	   String stockageDeCaractere = "";				//STUB
-	   char recuperationDeCaractereActuel;	//STUB
-	   for (int parcoursDeCaractere = 0; parcoursDeCaractere < this.polynome.length() - 1; parcoursDeCaractere++) {
+	   char recuperationDeCaractereActuel;	        //STUB
+	   this.polynome = this.polynome.replaceAll("\\s+", "");
+	   for (int parcoursDeCaractere = 0; parcoursDeCaractere < this.polynome.length(); parcoursDeCaractere++) {
 		
 		   recuperationDeCaractereActuel = this.polynome.charAt(parcoursDeCaractere);	//récupération du carac actuel évaluer 
-		   if (recuperationDeCaractereActuel != '+' || recuperationDeCaractereActuel != '-') {
+		   if (recuperationDeCaractereActuel != '+' && recuperationDeCaractereActuel != '-') {
 			   
 			   stockageDeCaractere += recuperationDeCaractereActuel;
 		   } else {
@@ -101,6 +124,9 @@ public class Polynome {
 				   stockageDeCaractere = "-";
 			   }
 		   }
+	   }
+	   if (!stockageDeCaractere.isEmpty()) {
+	       this.monomes.add(stockageDeCaractere);
 	   }
 	   return this.monomes;
 	}	
