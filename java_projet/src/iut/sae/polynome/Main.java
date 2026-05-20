@@ -17,12 +17,14 @@ public class Main {
         TestPolynome testeur = new TestPolynome();
         testeur.lancerTests();
        
-        // Test methode ToString FIXME elle marche pas - voir dans classe Polynome
-        /*
-        double[] monomesTestAffichage = {1.0, 2.0};
-        Polynome polynomeTestAffichage = new Polynome(monomesTestAffichage);
         
-        polynomeTestAffichage.toString();
-        */
+        //test
+        Polynome polynomeTestAffichage = new Polynome("2x^1 -3x^4 -x^2 + 100");
+        System.out.println("Affichage du polynome : " + polynomeTestAffichage.toString());
+        System.out.println("Affichage de sa liste de monomes : " + polynomeTestAffichage.getMonomes());
+        System.out.println("Affichage de sont degres : " + polynomeTestAffichage.degres());
+        System.out.println("Affichage de s liste de ses coefficient : " + polynomeTestAffichage.coefficient());
+        System.out.println("Affichage de sa limite en + : " + polynomeTestAffichage.limite('+'));
+        System.out.println("Affichage de sa limite en - : " + polynomeTestAffichage.limite('-'));
     }
 }
