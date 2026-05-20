@@ -65,7 +65,7 @@ public class TestPolynome {
     	//TODO inserer des valeurs de test
     			{"3y"},    // OK : Erreur bien détecter
     			{""},      // OK : Erreur bien détecter
-    			{"3x^2s"}, // OK : Erreur bien détecter
+    			{"3x^2s"}, // OK : Erreur bien détecterS
     	};
     	for (int numeroTest = 0; numeroTest < invalide.length; numeroTest++) {
     		try {
