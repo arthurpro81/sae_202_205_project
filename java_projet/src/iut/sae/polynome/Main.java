@@ -26,6 +26,6 @@ public class Main {
         System.out.println("Affichage de sa liste de ses coefficient : " + polynomeTestAffichage.coefficient());
         System.out.println("Affichage de sa limite en + : " + polynomeTestAffichage.limite('+'));
         System.out.println("Affichage de sa limite en - : " + polynomeTestAffichage.limite('-'));
-        System.out.println("Affichage de sa dérivé : " + polynomeTestAffichage.derive(2));
+        System.out.println("Affichage de sa dérivé : " + polynomeTestAffichage.derive(1));
     }
 }

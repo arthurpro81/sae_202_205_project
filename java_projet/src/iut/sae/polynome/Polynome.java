@@ -76,7 +76,6 @@ public class Polynome {
 	 */
 	public int degres() {
 	    int degMax = 0;
-	    String monomeDegMax;
 	    for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
 
 	        String monomeActuel = this.monomes.get(indiceDuMonome);
@@ -90,6 +89,7 @@ public class Polynome {
 	            int DegresActuel = Integer.parseInt(matcherDegres.group(1));
 
 	            if (DegresActuel > degMax) {
+	            	String monomeDegMax;
 	                degMax    = DegresActuel;
 	                monomeDegMax = monomeActuel;
 	            }
@@ -158,12 +158,12 @@ public class Polynome {
 	    }
 	    
 	    // convertion String -> int pour conparaison
-        int coefficientDuMonomeDegresMax = Integer.parseInt(this.coefficient().get(indexDegMax));
+        int coefficientMonomeDegrMax = Integer.parseInt(this.coefficient().get(indexDegMax));
 
 	    // Détermination de la limite
-	    resultatLimite = (limiteChercher == '+') ? (coefficientDuMonomeDegresMax > 0) ? "+Infini" : "-Infini" 
-	    										 : (degMax % 2 == 0) ? (coefficientDuMonomeDegresMax > 0) ? "+Infini" : "-Infini" 
-	    											                 : (coefficientDuMonomeDegresMax > 0) ? "-Infini" : "+Infini";
+	    resultatLimite = (limiteChercher == '+') ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
+	    										 : (degMax % 2 == 0) ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
+	    											                 : (coefficientMonomeDegrMax > 0) ? "-Infini" : "+Infini";
 	    
 	    return resultatLimite;
 	}
@@ -222,7 +222,7 @@ public class Polynome {
 	                monomesDeriveCourant.add(monomeDerive);
 
 	            } else if (matcherSansExposant.find()) {
-	                // --- Cas Ax → A (la dérivée de Ax est A) ---
+	                //Cas Ax → A (la dérivée de Ax est A)
 	                String coeffStr  = matcherSansExposant.group(1);
 	                int coeff = coeffStr.isEmpty()   ? 1
 	                          : coeffStr.equals("-") ? -1
