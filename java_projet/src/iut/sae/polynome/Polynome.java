@@ -1,5 +1,5 @@
 /**
- * Polynome.java											05/05/2026
+ * Polynome.java											20/05/2026
  * IUT Toulouse Captiole no copyright(copyleft )
  */
 package iut.sae.polynome;
@@ -76,7 +76,6 @@ public class Polynome {
 	 */
 	public int degres() {
 	    int degMax = 0;
-	    String monomeDegMax;
 	    for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
 
 	        String monomeActuel = this.monomes.get(indiceDuMonome);
@@ -90,6 +89,7 @@ public class Polynome {
 	            int DegresActuel = Integer.parseInt(matcherDegres.group(1));
 
 	            if (DegresActuel > degMax) {
+	            	String monomeDegMax;
 	                degMax    = DegresActuel;
 	                monomeDegMax = monomeActuel;
 	            }
@@ -158,31 +158,84 @@ public class Polynome {
 	    }
 	    
 	    // convertion String -> int pour conparaison
-        int coefficientDuMonomeDegresMax = Integer.parseInt(this.coefficient().get(indexDegMax));
+        int coefficientMonomeDegrMax = Integer.parseInt(this.coefficient().get(indexDegMax));
 
 	    // Détermination de la limite
-	    resultatLimite = (limiteChercher == '+') ? (coefficientDuMonomeDegresMax > 0) ? "+Infini" : "-Infini" 
-	    										 : (degMax % 2 == 0) ? (coefficientDuMonomeDegresMax > 0) ? "+Infini" : "-Infini" 
-	    											                 : (coefficientDuMonomeDegresMax > 0) ? "-Infini" : "+Infini";
-	    /*
-	    if (limiteChercher == '+') {
-	        // En +infini : signe du coefficient positif
-	        resultatLimite = (coefficientDuMonomeDegresMax > 0) ? "+Infini" : "-Infini";
-	    } else {
-	        // En -infini : dépend du signe ET de la parité du degré
-	        if (degMax % 2 == 0) {
-	            // Degré pair : même comportement qu'en +infini
-	            resultatLimite = (coefficientDuMonomeDegresMax > 0) ? "+Infini" : "-Infini";
-	        } else {
-	            // Degré impair : comportement opposé qu'en +infini
-	            resultatLimite = (coefficientDuMonomeDegresMax > 0) ? "-Infini" : "+Infini";
-	        }
-	    }
-	    */
+	    resultatLimite = (limiteChercher == '+') ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
+	    										 : (degMax % 2 == 0) ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
+	    											                 : (coefficientMonomeDegrMax > 0) ? "-Infini" : "+Infini";
 	    
 	    return resultatLimite;
 	}
+	
+	/* Méthode calculant la dérivé d'un objet Polynome et renoyant une ArrayList<String> de monomes du polynome dérivé.
+	 * Cette Méthode ne permet pas de calculer la primitive d'un objet Polynome. 
+	 * @param exposantDerive - exposant de la deriver du polynome dériver - EX: f'(f'(p)) -> exposant = 2
+	 * @return - renvoie une la liste des monomes du polynome dérivé
+	 */
+	public ArrayList<String> derive(int exposantDerive) {
+	    if (exposantDerive <= 0) {
+	        throw new IllegalArgumentException("Erreur : parametre <= 0");
+	    }
 
+	    ArrayList<String> monomesDerive = new ArrayList<>(this.monomes);
+
+	    // Boucle de répétition (f'', f''', etc.)
+	    for (int repetition = 0; repetition < exposantDerive; repetition++) {
+
+	        ArrayList<String> monomesDeriveCourant = new ArrayList<>();
+
+	        // Pattern capturant coefficient (groupe 1) et exposant (groupe 2)
+	        Pattern patternAvecExposant = Pattern.compile("(-?\\d*)x\\^(\\d+)");
+	        // Pattern capturant coefficient d'un monôme de la forme Ax (sans ^)
+	        Pattern patternSansExposant = Pattern.compile("(-?\\d*)x$");
+
+	        for (int parcourMonome = 0; parcourMonome < monomesDerive.size(); parcourMonome++) {
+	            String monomeCourant = monomesDerive.get(parcourMonome);
+
+	            Matcher matcherAvecExposant = patternAvecExposant.matcher(monomeCourant);
+	            Matcher matcherSansExposant = patternSansExposant.matcher(monomeCourant);
+
+	            if (matcherAvecExposant.find()) {
+	                // --- Cas Ax^b → A*b x^(b-1) ---
+	                String coeffStr = matcherAvecExposant.group(1); // groupe 1 : coefficient
+	                String degStr   = matcherAvecExposant.group(2); // groupe 2 : exposant
+
+	                // Gestion coefficient implicite (ex: "x^2" → coeffStr = "")
+	                int coeff = coeffStr.isEmpty()        ? 1
+	                          : coeffStr.equals("-")      ? -1
+	                          : Integer.parseInt(coeffStr);
+
+	                int deg          = Integer.parseInt(degStr);
+	                int nouveauCoeff = coeff * deg;
+	                int nouveauDeg   = deg - 1;
+
+	                // Reconstruction
+	                String monomeDerive;
+	                if (nouveauDeg == 0) {
+	                    monomeDerive = String.valueOf(nouveauCoeff); // constante
+	                } else if (nouveauDeg == 1) {
+	                    monomeDerive = nouveauCoeff + "x";           // Ax
+	                } else {
+	                    monomeDerive = nouveauCoeff + "x^" + nouveauDeg; // Ax^b
+	                }
+	                monomesDeriveCourant.add(monomeDerive);
+
+	            } else if (matcherSansExposant.find()) {
+	                //Cas Ax → A (la dérivée de Ax est A)
+	                String coeffStr  = matcherSansExposant.group(1);
+	                int coeff = coeffStr.isEmpty()   ? 1
+	                          : coeffStr.equals("-") ? -1
+	                          : Integer.parseInt(coeffStr);
+	                monomesDeriveCourant.add(String.valueOf(coeff));
+
+	            }
+	            //constante -> dérivée = 0, on ne l'ajoute pas
+	        }
+	        monomesDerive = monomesDeriveCourant;
+	    }
+	    return monomesDerive;
+	}
 	
     /**
      * Getter
