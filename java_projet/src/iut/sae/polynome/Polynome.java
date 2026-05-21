@@ -190,8 +190,8 @@ public class Polynome {
 	        // Pattern capturant coefficient d'un monôme de la forme Ax (sans ^)
 	        Pattern patternSansExposant = Pattern.compile("(-?\\d*)x$");
 
-	        for (int i = 0; i < monomesDerive.size(); i++) {
-	            String monomeCourant = monomesDerive.get(i);
+	        for (int parcourMonome = 0; parcourMonome < monomesDerive.size(); parcourMonome++) {
+	            String monomeCourant = monomesDerive.get(parcourMonome);
 
 	            Matcher matcherAvecExposant = patternAvecExposant.matcher(monomeCourant);
 	            Matcher matcherSansExposant = patternSansExposant.matcher(monomeCourant);
