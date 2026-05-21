@@ -69,6 +69,7 @@ public class Polynome {
 		   if (!stockageDeCaractere.isEmpty()) {
 		       this.monomes.add(stockageDeCaractere);
 		   }
+		   this.monomes.remove("");
 	}
 
 	/* Méthode recherchant les degres d'un objet Polynome() et renvoyant sont degres le plus haut
@@ -79,7 +80,15 @@ public class Polynome {
 	    for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
 
 	        String monomeActuel = this.monomes.get(indiceDuMonome);
-
+	        
+	        // Pattern qui cherche spécifiquement un ou plusieurs chiffres suivie de juste 'x'
+	        Pattern patternXSansDegres = Pattern.compile("^-?\\d*x$");
+	        Matcher matcherXSansDegres = patternXSansDegres.matcher(monomeActuel);
+	        
+	        if (matcherXSansDegres.find()) {
+	        	monomeActuel = monomeActuel.replaceAll("x.*", "x^1"); 	//Convertie "x" en "x^1"
+	        }
+	        
 	        // Pattern qui cherche ^ suivi d'un ou plusieurs chiffres
 	        Pattern patternDegres = Pattern.compile("\\^(\\d+)");
 	        Matcher matcherDegres = patternDegres.matcher(monomeActuel);
@@ -87,7 +96,7 @@ public class Polynome {
 	        if (matcherDegres.find()) {
 	            // group(1) récupère uniquement les chiffres après le ^
 	            int DegresActuel = Integer.parseInt(matcherDegres.group(1));
-
+	            
 	            if (DegresActuel > degMax) {
 	            	String monomeDegMax;
 	                degMax    = DegresActuel;
@@ -145,26 +154,40 @@ public class Polynome {
 
 	    // Récupération du DegMax et de l'indexDegMax
 	    for (int indiceMonomeActuel = 0; indiceMonomeActuel < this.monomes.size(); indiceMonomeActuel++) {
+	    	
+	    	String monomeCourrant = this.monomes.get(indiceMonomeActuel);
+	    	
+	        // Pattern qui cherche spécifiquement ax sans "^b"
+	        Pattern patternXSansDegres = Pattern.compile("^-?\\d*x$");
+	        Matcher matcherXSansDegres = patternXSansDegres.matcher(this.monomes.get(indiceMonomeActuel));
+	        
+	        if (matcherXSansDegres.find()) {
+	        	monomeCourrant = monomeCourrant.replaceAll("x.*", "x^1"); 	//Convertie "x" en "x^1"
+	        }
+	    	
 	        Pattern patternDegres = Pattern.compile("\\^(\\d+)");
-	        Matcher matcherDegres = patternDegres.matcher(this.monomes.get(indiceMonomeActuel));
+	        Matcher matcherDegres = patternDegres.matcher(monomeCourrant);
 	        
 	        if (matcherDegres.find()) {
-	            int DegresActuel = Integer.parseInt(matcherDegres.group(1));
+	        	int DegresActuel = Integer.parseInt(matcherDegres.group(1));
 	            if (DegresActuel > degMax) {
 	                degMax      = DegresActuel;
 	                indexDegMax = indiceMonomeActuel;
 	            }
 	        }
 	    }
-	    
+	
 	    // convertion String -> int pour conparaison
         int coefficientMonomeDegrMax = Integer.parseInt(this.coefficient().get(indexDegMax));
-
-	    // Détermination de la limite
-	    resultatLimite = (limiteChercher == '+') ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
-	    										 : (degMax % 2 == 0) ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
-	    											                 : (coefficientMonomeDegrMax > 0) ? "-Infini" : "+Infini";
-	    
+        
+        if (degMax > 0) {
+		    // Détermination de la limite
+		    resultatLimite = (limiteChercher == '+') ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
+		    										 : (degMax % 2 == 0) ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
+	        											                 : (coefficientMonomeDegrMax > 0) ? "-Infini" : "+Infini";
+        } else {  // monome = constante donc revoyer monome ou monome = x ou -x  ????
+        	resultatLimite = this.monomes.get(0);
+        }
 	    return resultatLimite;
 	}
 	
