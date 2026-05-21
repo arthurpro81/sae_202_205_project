@@ -19,9 +19,6 @@ package iut.sae.polynome;
  */
 public class TestPolynome {
 
-    // =========================================================================
-    // Exception interne pour les échecs de test
-    // =========================================================================
 
     private static class TestException extends RuntimeException {
 
@@ -39,13 +36,14 @@ public class TestPolynome {
         }
     }
 
-    // =========================================================================
-    // FIXTURE : jeu de polynômes valides partagé entre les tests d'instance
-    // Initialisé à la construction — doit rester cohérent avec tous les tableaux
-    // ATTENDU définis dans chaque méthode de test.
-    //
-    // Chaque entrée est commentée avec sa représentation mathématique.
-    // =========================================================================
+    /*
+     *FIXTURE : jeu de polynômes valides partagé entre les tests d'instance
+     *Initialisé à la construction — doit rester cohérent avec tous les tableaux
+     *ATTENDU définis dans chaque méthode de test.
+     *Chaque entrée est commentée avec sa représentation mathématique.
+     *
+     */
+
 
     private final Polynome[] FIXTURE_POLYNOMES_OK = {
 
@@ -82,18 +80,12 @@ public class TestPolynome {
         new Polynome(new double[]{ 1.0, 0.0, -1.0 }),
     };
 
-    // =========================================================================
-    // Constructeur
-    // =========================================================================
 
     /** Crée un objet de test. */
     public TestPolynome() {
         super();
     }
 
-    // =========================================================================
-    // Point d'entrée
-    // =========================================================================
 
     /**
      * Point d'entrée : crée un testeur et lance tous les tests.
@@ -140,10 +132,7 @@ public class TestPolynome {
         }
     }
 
-    // =========================================================================
-    // TESTS DU CONSTRUCTEUR
-    // =========================================================================
-
+    
     /**
      * Vérifie que le constructeur lève bien IllegalArgumentException
      * pour chaque entrée invalide (null ou tableau vide).
@@ -209,9 +198,6 @@ public class TestPolynome {
         }
     }
 
-    // =========================================================================
-    // TESTS DES GETTERS
-    // =========================================================================
 
     /**
      * Vérifie que getMonomes() retourne un tableau de valeurs identiques
@@ -246,9 +232,7 @@ public class TestPolynome {
         }
     }
 
-    // =========================================================================
-    // TESTS DES CARACTÉRISTIQUES (section 4.2 du sujet SAE)
-    // =========================================================================
+    
 
     /**
      * Vérifie la méthode degres() sur chaque polynôme de la fixture.
@@ -298,16 +282,15 @@ public class TestPolynome {
     private void testToString() {
 
         final String[] STRINGS_ATTENDUS = {
-            "1.0",                                  // [0]  constante
-            "2.0X + 1.0",                           // [1]
-            "3.0X^2 + 2.0X + 1.0",                 // [2]
-            "-4.0X^3 - 2.0X + 5.0",                // [3]  terme 0.0X^2 omis
-            "1.0X^4",                               // [4]
-            "3.1X^5 + 2.7X^3 - 4.1X + 8.0",       // [5]  termes nuls omis
-            "2.0X + 1.0",                           // [6]  zéros en tête ignorés
-            "0.0",                                  // [7]  polynôme nul
-            "-1.0X + 3.0",                          // [8]
-            "1.0X^2 - 1.0",                         // [9]  terme 0.0X omis
+            "1.0",                                  
+            "2.0X + 1.0",                           
+            "3.0X^2 + 2.0X + 1.0",                 
+            "-4.0X^3 - 2.0X + 5.0",                
+            "3.1X^5 + 2.7X^3 - 4.1X + 8.0",      
+            "2.0X + 1.0",                           
+            "0.0",                                  
+            "-1.0X + 3.0",                          
+            "1.0X^2 - 1.0",                         
         };
 
         for (int noPolynome = 0; noPolynome < STRINGS_ATTENDUS.length; noPolynome++) {
