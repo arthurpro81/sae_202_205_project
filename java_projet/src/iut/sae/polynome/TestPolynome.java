@@ -32,18 +32,11 @@ public class TestPolynome {
             System.err.println("ERREUR sur le test de création invalide : " + echecAnormal.getMessage());
         }
         try {
-        	testLimitesValide();
+        	testLimite();
         	 System.out.println("Test Limites valide : OK");
         } catch (Exception echecAnormal) {
         	System.err.println("ERREUR sur le test de limite valide : " + echecAnormal.getMessage());
         }
-        try {
-        	testLimitesInvalide();
-        	 System.out.println("Test Limites invalide : OK");
-        } catch (Exception echecAnormal) {
-        	System.err.println("ERREUR sur le test de limite invalide : " + echecAnormal.getMessage());
-        }
-
         System.out.println("Fin des tests.");
     }
 
@@ -93,28 +86,85 @@ public class TestPolynome {
      * Vérifie le bon fonctionnement de la méthode Limite et retourne le bon résultat
      * @throws Exception - capture une erreur si le résultat retourné n'est pas le bon
      */
-    private void testLimiteValide() throws Exception {
+    private void testLimite() throws Exception {
     	String[][] limiteValide = {
     			// test avec valeurs standard
-    			{"3x^2+7x"},
-    			{"-17x^6+88x^3+1"},
-    			{"12x^5"},
-    			{"-3x^3-7x+2"},
+    			{"3x^2+7x"}, // positif et exposant paire
+    			{"-17x^6+88x^3+1"}, // negatif et exposant paire
+    			{"12x^5"}, // positif et exposant impaire
+    			{"-3x^3-7x+2"}, // negatif et exposant impaire
     			// test avec valeur particulière
-    			{"x^7+4x^2-4"},
-    			{"-x^4+5"},
-    			{"777x+1"},
-    			{"-10x-77"},
-    			{"x^2+x"},
-    			{"-x^25+7x^10-10"},
+    			{"x^7+4x^2-4"}, // constante égale à 1, exposant paire
+    			{"-x^4+5"}, // constante égale à -1, exposant paire
+    			{"777x+1"}, // positif pas d'exposant
+    			{"-10x-77"}, //negatif pas d'exposant
+    			{"x^2+x"}, // constante égale à 1, exposant impaire
+    			{"-x^25+7x^10-10"}, // constante égale à -1, exposant impaire
     			// cas monome uniquement x ou -x
     			{"x"},
     			{"-x"},
+    			{"1x"}, // equvalant à x mais avec plus de précision
+    			{"-1x"}, // equivalant à -x mais avec plus de  précision
     			// cas monome constante
     			{"10"},
     			{"-4"},
-    			{"0"}
-    			
+    			{"0"},
     	};
+    	String[] resultatAttendu = {
+    			// resultat valeur standard
+    			"+Infini",
+    			"+Infini",
+    			"-Infini",
+    			"-Infini",
+    			"+Infini",
+    			"-Infini",
+    			"-Infini",
+    			"+Infini",
+    			// resultat valeur particulière
+    			"+Infini",
+    			"-Infini",
+    			"-Infini",
+    			"-Infini",
+    			"+Infini",
+    			"-Infini",
+    			"-Infini",
+    			"+Infini",
+    			"+Infini",
+    			"+Infini",
+    			"-Infini",
+    			"+Infini",
+    			// resultat cas x ou -x
+    			"+Infini",
+    			"-Infini",
+    			"-Infini",
+    			"+Infini",
+    			"+Infini",
+    			"-Infini",
+    			"-Infini",
+    			"+Infini",
+    			// resultat constante
+    			"10",
+    			"10",
+    			"-4",
+    			"-4",
+    			"0",
+    			"0"
+    	};
+    	boolean correct = true;
+    	for (int numeroTest = 0; numeroTest < limiteValide.length; numeroTest++) {
+    		try {
+    			Polynome valeurATester = new Polynome(limiteValide[numeroTest][0]);
+    			String resultatRecuperer = valeurATester.limite('+');
+    			boolean comparaison; 
+    			comparaison = resultatRecuperer.equals(resultatAttendu[numeroTest*2]);
+    			correct = comparaison == true;
+    			resultatRecuperer = valeurATester.limite('-'); 
+    			comparaison = resultatRecuperer.equals(resultatAttendu[numeroTest*2+1]);
+    			correct = comparaison == true;
+    			System.out.println("test limite n°" + numeroTest + " en +Infini et -Infini passé et resultat est " + correct);
+    		} catch (IllegalArgumentException nonAttendu){
+    			System.out.println("ERR limite n'a pas pu être calculé pour le test n°" + numeroTest);
+    		}
+    	}
     }
 }
