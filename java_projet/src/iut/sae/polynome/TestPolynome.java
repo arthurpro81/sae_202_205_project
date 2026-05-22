@@ -89,4 +89,32 @@ public class TestPolynome {
     		}
     	}
     }
+    /**
+     * Vérifie le bon fonctionnement de la méthode Limite et retourne le bon résultat
+     * @throws Exception - capture une erreur si le résultat retourné n'est pas le bon
+     */
+    private void testLimiteValide() throws Exception {
+    	String[][] limiteValide = {
+    			// test avec valeurs standard
+    			{"3x^2+7x"},
+    			{"-17x^6+88x^3+1"},
+    			{"12x^5"},
+    			{"-3x^3-7x+2"},
+    			// test avec valeur particulière
+    			{"x^7+4x^2-4"},
+    			{"-x^4+5"},
+    			{"777x+1"},
+    			{"-10x-77"},
+    			{"x^2+x"},
+    			{"-x^25+7x^10-10"},
+    			// cas monome uniquement x ou -x
+    			{"x"},
+    			{"-x"},
+    			// cas monome constante
+    			{"10"},
+    			{"-4"},
+    			{"0"}
+    			
+    	};
+    }
 }
