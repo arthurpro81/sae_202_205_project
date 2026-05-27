@@ -4,6 +4,8 @@
  */
 package iut.sae.polynome;
 
+import java.util.Scanner;
+
 //TODO mettre le prog Main à part des autres programmes
 
 /**
@@ -17,12 +19,22 @@ public class Main {
         TestPolynome testeur = new TestPolynome();
         testeur.lancerTests();
        
-        // Test methode ToString FIXME elle marche pas - voir dans classe Polynome
-        /*
-        double[] monomesTestAffichage = {1.0, 2.0, 3.0};
-        Polynome polynomeTestAffichage = new Polynome(monomesTestAffichage);
+        Scanner entreeUti = new Scanner(System.in);
         
-        polynomeTestAffichage.toString();
-        */
+        System.out.print("Entrez un polynome : ");
+        String saisiePoly = entreeUti.next();
+        entreeUti.close();
+        
+        Polynome polynomeUti = new Polynome(saisiePoly);
+        
+        System.out.println("Affichage du polynome : " + polynomeUti.toString());
+        System.out.println("Affichage de sa liste de monomes : " + polynomeUti.getMonomes() + "\n \n");
+        System.out.println("Affichage de sont degres : " + polynomeUti.degres());
+        System.out.println("Affichage de sa liste de ses coefficient : " + polynomeUti.coefficient());
+        System.out.println("Affichage de sa limite en + : " + polynomeUti.limite('+'));
+        System.out.println("Affichage de sa limite en - : " + polynomeUti.limite('-'));
+        System.out.println("Affichage de sa dérivé f': " + polynomeUti.derive(1));
+        System.out.println("Affichage de sa dérivé f''''': " + polynomeUti.derive(5));
+        
     }
 }
