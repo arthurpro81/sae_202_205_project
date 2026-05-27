@@ -21,6 +21,7 @@ public class TestPolynome {
         try {
             testCreationValide();
             testDerive();
+            testRacines();
             System.out.println("Test création valide : OK");
         } catch (Exception echecAnormal) {
             System.err.println("ERREUR sur le test de création valide : " + echecAnormal.getMessage());
@@ -110,6 +111,59 @@ public class TestPolynome {
                         + " obtenu = " + resultatObtenu
                     );
                 }
+            } catch (IllegalArgumentException attendue) {
+                throw new Exception("ERR combinaison invalide indice : " + numeroTest);
+            }
+        }
+    }
+    
+    /**
+     * Vérifie que la méthode racines() fonctionne correctement.
+     * @throws Exception - capture une erreur si le résultat est incorrect
+     */
+    private void testRacines() throws Exception {
+
+        String[][] valide = {
+
+            // polynome                     racines attendues
+            {"x-1",                         "[1.0]"},
+            {"x+2",                         "[-2.0]"},
+            {"x^2-4",                       "[-2.0, 2.0]"},
+            {"x^2-2x+1",                    "[1.0]"},          // racine double
+            {"x^2+1",                       "[]"},             // aucune racine réelle
+            {"x^2-5x+6",                    "[2.0, 3.0]"},
+            {"x^3-6x^2+11x-6",              "[1.0, 2.0, 3.0]"},
+            {"2x-8",                        "[4.0]"},
+            {"x^2",                         "[0.0]"},
+            {"x^3",                         "[0.0]"},
+            
+
+            {"999999x^2-999999",            "[-1.0, 1.0]"},
+            {"x^2-1000000",                 "[-1000.0, 1000.0]"},
+            {"x^4-16",                      "[-2.0, 2.0]"},
+            {"x^6-x^3",                     "[0.0, 1.0]"},
+            {"5x^2+0x-20",                  "[-2.0, 2.0]"},
+            
+            {"x^2-2",                       "[-1.4142, 1.4142]"}, // 2 racines de type double
+            {"2x-1",                        "[0.5]"},             // 1 racines de type double
+            {"x^2-3",                       "[-1.7320, 1.7320]"}  // 2 racines de type double (positve et négative)
+        };
+
+        for (int numeroTest = 0; numeroTest < valide.length; numeroTest++) {
+            try {
+                String[] combinaison = valide[numeroTest];
+                Polynome polynomeTest = new Polynome(combinaison[0]);
+                String resultatObtenu = polynomeTest.racines().toString();
+                String resultatAttendu = combinaison[1];
+
+                if (!resultatObtenu.equals(resultatAttendu)) {
+                    throw new Exception(
+                        "ERR racines incorrect indice : " + numeroTest
+                        + " attendu = " + resultatAttendu
+                        + " obtenu = " + resultatObtenu
+                    );
+                }
+
             } catch (IllegalArgumentException attendue) {
                 throw new Exception("ERR combinaison invalide indice : " + numeroTest);
             }
