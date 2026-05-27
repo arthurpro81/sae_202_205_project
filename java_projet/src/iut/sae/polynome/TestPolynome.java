@@ -20,6 +20,7 @@ public class TestPolynome {
 
         try {
             testCreationValide();
+            testDerive();
             System.out.println("Test création valide : OK");
         } catch (Exception echecAnormal) {
             System.err.println("ERREUR sur le test de création valide : " + echecAnormal.getMessage());
@@ -32,12 +33,6 @@ public class TestPolynome {
             System.err.println("ERREUR sur le test de création invalide : " + echecAnormal.getMessage());
         }
         
-        try {
-            testDerive();
-            System.out.println("Test derive : OK");
-        } catch (Exception echecAnormal) {
-            System.err.println("ERREUR sur le test derive : " + echecAnormal.getMessage());
-        }
 
         System.out.println("Fin des tests.");
     }
@@ -92,11 +87,12 @@ public class TestPolynome {
 
         String[][] valide = {
 
-            // polynome        derive(x1) attendu
+            // polynome        derive attendu
             {"3x^2",           "[6x]"},
             {"5x^3",           "[15x^2]"},
             {"7x",             "[7]"},
             {"9",              "[]"},
+            {"x",              "[1]"},
             {"3x^2+2x+1",      "[6x, 2]"},
             {"-4x^3+2x^2",     "[-12x^2, 4x]"}
         };
