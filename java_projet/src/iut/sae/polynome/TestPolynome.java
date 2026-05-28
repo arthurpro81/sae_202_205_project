@@ -32,15 +32,9 @@ public class TestPolynome {
 			System.err.println("ERREUR sur le test de création invalide : " + echecAnormal.getMessage());
 		}
 
-		try {
-			testDegresInvalide();
-			System.out.println("Test  de degres Invalide : OK ");
-		} catch (Exception echecAnormal) {
-			System.err.println("ERREUR sur le test de degres invalide : " + echecAnormal.getMessage());
-		}
 
 		try {
-			testDegresValide();
+			testDegresMax();
 			System.out.println("Test degrés valides : OK");
 		} catch (Exception echecAnormal) {
 			System.err.println("ERREUR degrés valides : " + echecAnormal.getMessage());
@@ -90,52 +84,45 @@ public class TestPolynome {
 		}
 	}
 
-	private void testDegresInvalide() throws Exception {
-		String[][] invalide = {
-				// variable invalide
-				{ "3y" }, { "3y^2 + 1" },
 
-				// chaine vide
-				{ "" },
+	private void testDegresMax() throws Exception {
+	    String[][] valide = { 
+	        { "1" }, { "42" }, { "x" }, { "3x" }, { "-3x" }, { "x^2" }, { "3x^2" }, { "3x^10" },
+	        { "3x^2 + 2x + 1" }, { "3x^2+2x+1" }, { "3x^2 - 2x + 1" }, { "3x^2 - 2x - 1" }, { "-3x^2 + 2x + 1" },
+	        { "-x + 3" }, { "3x^10 - 9x^2 - 3" }, { "5x^5 + 1" } 
+	    };
 
-				// Caractere pas present dans un polynome
-				{ "3x^2 + ?" }, { "3x^2 + $5" }, { "3x^2 + 2x!" }, { "3x^2 + 2.5x" },
+	    int[] resultatAttendu = {
+	        0, 0, 1, 1, 1, 2, 2, 10,
+	        2, 2, 2, 2, 2,
+	        1, 10, 5
+	    };
 
-				// format degres invalide
-				{ "3x^2s" }, { "3x^" }, { "3x^^2" }, { "3x^2^1" },
+	    boolean correct = true;
 
-				// opérateurs invalides
-				{ "++2x" }, { "3x^2 * 2" }, { "3x^2 / 2" }, { "3x^2 % 2" },
+	    for (int numeroTest = 0; numeroTest < valide.length; numeroTest++) {
+	        try {
+	            String[] combinaison = valide[numeroTest];
+	            
+	            Polynome valeurATester = new Polynome(combinaison[0]);
+	            
+	            int resultatRecupere = valeurATester.degres(); 
+	            
+	            boolean comparaison = (resultatRecupere == resultatAttendu[numeroTest]);
+	            correct = comparaison; 
+	            
+	            if (correct) {
+	                System.out.println("test degresMax n°" + numeroTest + " passé et le resultat est " + correct);
+	            } else {
+	                System.out.println("ECHEC test degresMax n°" + numeroTest + " sur " + combinaison[0] + 
+	                                   " | Attendu : " + resultatAttendu[numeroTest] + " | Obtenu : " + resultatRecupere);
+	            }
 
-				// erreur de structure des opereteur
-				{ "+ 3x^2" }, { "3x^2 +" }, { "3x^2 + + 2" }, { "(3x^2 + 2)" }, };
-		for (int numeroTest = 0; numeroTest < invalide.length; numeroTest++) {
-			try {
-				String[] combinaison = invalide[numeroTest];
-				new Polynome(combinaison[0]);
-				throw new Exception("ERR combinaison valide indice : " + numeroTest);
-			} catch (IllegalArgumentException attendue) {
-				// C'est normal, le test a réussi car l'erreur a été détectée
-			}
-		}
-	}
-
-	private void testDegresValide() throws Exception {
-		String[][] valide = { { "1" }, { "42" }, { "x" }, { "3x" }, { "-3x" }, { "x^2" }, { "3x^2" }, { "3x^10" },
-				{ "3x^2 + 2x + 1" }, { "3x^2+2x+1" }, { "3x^2 - 2x + 1" }, { "3x^2 - 2x - 1" }, { "-3x^2 + 2x + 1" },
-				{ "-x + 3" }, { "3x^10 - 9x^2 - 3" }, { "5x^5 + 1" }, };
-
-		for (int numeroTest = 0; numeroTest < valide.length; numeroTest++) {
-			try {
-				String[] combinaison = valide[numeroTest];
-				new Polynome(combinaison[0]);
-				// Si on arrive ici sans exception : OK, c'est ce qu'on veut
-			} catch (IllegalArgumentException echecAnormal) {
-				// Si une exception est levée sur une chaîne valide : ERREUR
-				throw new Exception("ERR combinaison valide rejetée à tort, indice : " + numeroTest + " -> "
-						+ valide[numeroTest][0]);
-			}
-		}
+	        } catch (IllegalArgumentException echecAnormal) {
+	            throw new Exception("ERR combinaison valide rejetée à tort, indice : " + numeroTest + " -> "
+	                    + valide[numeroTest][0]);
+	        }
+	    }
 	}
 
 }

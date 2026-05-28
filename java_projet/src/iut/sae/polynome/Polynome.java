@@ -71,6 +71,38 @@ public class Polynome {
     	    
     	    this.monomes.remove("");
     	    
+    	 // TRI A BULLES — ordre décroissant par degré
+    	 Pattern patternDegre = Pattern.compile("\\^(\\d+)");
+
+    	 // On répète des passes sur toute la liste
+    	 for (int numeroDePassage = 0; numeroDePassage < this.monomes.size() - 1; numeroDePassage++) {
+
+    	     // A chaque passe on compare les voisins deux à deux
+    	     for (int indiceMonomeGauche = 0; indiceMonomeGauche < this.monomes.size() - 1 - numeroDePassage; indiceMonomeGauche++) {
+
+    	         // On récupère les deux voisins
+    	         String monomeGauche = this.monomes.get(indiceMonomeGauche);
+    	         String monomeDroit  = this.monomes.get(indiceMonomeGauche + 1);
+
+    	         // On extrait leurs degrés avec le Pattern
+    	         Matcher matcherGauche = patternDegre.matcher(monomeGauche);
+    	         Matcher matcherDroit  = patternDegre.matcher(monomeDroit);
+
+    	         int degreGauche = matcherGauche.find() ? Integer.parseInt(matcherGauche.group(1))
+    	                         : monomeGauche.contains("x") ? 1 : 0;
+
+    	         int degreDroit  = matcherDroit.find()  ? Integer.parseInt(matcherDroit.group(1))
+    	                         : monomeDroit.contains("x")  ? 1 : 0;
+
+    	         // Si le gauche est plus PETIT que le droit → on échange
+    	         // (on veut décroissant donc le plus grand doit être à gauche)
+    	         if (degreGauche < degreDroit) {
+    	             this.monomes.set(indiceMonomeGauche,     monomeDroit);
+    	             this.monomes.set(indiceMonomeGauche + 1, monomeGauche);
+    	         }
+    	     }
+    	 }
+    	    
     	    
     	}
 
