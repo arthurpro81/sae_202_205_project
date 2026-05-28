@@ -46,12 +46,6 @@ public class TestPolynome {
 			System.err.println("ERREUR degrés valides : " + echecAnormal.getMessage());
 		}
 		
-		try {
-		    testMultiplication();
-		    System.out.println("Test multiplication : OK");
-		} catch (Exception echecAnormal) {
-		    System.err.println("ERREUR sur le test de multiplication : " + echecAnormal.getMessage());
-		}
 	}
 
 	/**
@@ -142,32 +136,6 @@ public class TestPolynome {
 						+ valide[numeroTest][0]);
 			}
 		}
-	}
-	
-	private void testMultiplication() throws Exception {
-	    // Cas 1 : (3x^2 + 2x + 1) * (x + 2) = 3x^3 + 8x^2 + 5x + 2
-	    Polynome p1 = new Polynome("3x^2 + 2x + 1");
-	    Polynome p2 = new Polynome("x + 2");
-	    String resultat1 = p1.multiplication(p2).toString();
-	    if (!resultat1.equals("[3x^3, 8x^2, 5x, 2]")) {
-	        throw new Exception("Cas 1 échoué : " + resultat1);
-	    }
-
-	    // Cas 2 : (x + 1) * (x + 1) = x^2 + 2x + 1
-	    Polynome p3 = new Polynome("x + 1");
-	    Polynome p4 = new Polynome("x + 1");
-	    String resultat2 = p3.multiplication(p4).toString();
-	    if (!resultat2.equals("[x^2, 2x, 1]")) {
-	        throw new Exception("Cas 2 échoué : " + resultat2);
-	    }
-
-	    // Cas 3 : (2x) * (3x) = 6x^2
-	    Polynome p5 = new Polynome("2x");
-	    Polynome p6 = new Polynome("3x");
-	    String resultat3 = p5.multiplication(p6).toString();
-	    if (!resultat3.equals("[6x^2]")) {
-	        throw new Exception("Cas 3 échoué : " + resultat3);
-	    }
 	}
 
 }

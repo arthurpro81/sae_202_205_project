@@ -30,7 +30,7 @@ public class Polynome {
 
     // polynome saisie par l'utilisateur sous le format : 3x^2 + 7x^1 +5
     private String polynome;
-
+    
     /**
      * Constructeur de polynômes
      * @param polynome - polynômes rentrer par l'uti 
@@ -50,26 +50,29 @@ public class Polynome {
      * Méthode appelée par le constructeur à chaque création d'objet Polynome.
      * Méthode permétant de remplir directement this.monomes avec les monomes du polynome
      */
-	private void remplirMonomes() {
-		   String stockageDeCaractere = "";				//STUB
-		   char recuperationDeCaractereActuel;
-		   String polyNoSpace = this.polynome.replaceAll("\\s+", "");
-		   
-		   for (int parcoursDeCaractere = 0; parcoursDeCaractere < polyNoSpace.length(); parcoursDeCaractere++) {
-			
-			   recuperationDeCaractereActuel = polyNoSpace.charAt(parcoursDeCaractere);	//récupération du carac actuel évaluer 
-			   
-			   if (recuperationDeCaractereActuel != '+' && recuperationDeCaractereActuel != '-') {
-				   stockageDeCaractere += recuperationDeCaractereActuel;
-			   } else {
-				   this.monomes.add(stockageDeCaractere);
-				   stockageDeCaractere = (recuperationDeCaractereActuel == '-') ? "-" : "";
-			   }
-		   }
-		   if (!stockageDeCaractere.isEmpty()) {
-		       this.monomes.add(stockageDeCaractere);
-		   }
-	}
+     private void remplirMonomes() {
+    	    String stockageDeCaractere = "";
+    	    char recuperationDeCaractereActuel;
+    	    String polyNoSpace = this.polynome.replaceAll("\\s+", "");
+    	    
+    	    for (int parcoursDeCaractere = 0; parcoursDeCaractere < polyNoSpace.length(); parcoursDeCaractere++) {
+    	        recuperationDeCaractereActuel = polyNoSpace.charAt(parcoursDeCaractere);
+    	        
+    	        if (recuperationDeCaractereActuel != '+' && recuperationDeCaractereActuel != '-') {
+    	            stockageDeCaractere += recuperationDeCaractereActuel;
+    	        } else {
+    	            this.monomes.add(stockageDeCaractere);
+    	            stockageDeCaractere = (recuperationDeCaractereActuel == '-') ? "-" : "";
+    	        }
+    	    }
+    	    if (!stockageDeCaractere.isEmpty()) {
+    	        this.monomes.add(stockageDeCaractere);
+    	    }
+    	    
+    	    this.monomes.remove("");
+    	    
+    	    
+    	}
 
 	/* Méthode recherchant les degres d'un objet Polynome() et renvoyant sont degres le plus haut
 	 * @return degMax - renvoie le degres max du polynome sous la forme d'un int 
@@ -101,8 +104,8 @@ public class Polynome {
 	/*
 	 * 
 	 */
-	public ArrayList<String> coefficient() {
-		ArrayList<String> coefficient = new ArrayList<>();
+	public ArrayList<Integer> coefficient() {
+		ArrayList<Integer> coefficient = new ArrayList<>();
 		for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
 			String monomeActuel = this.monomes.get(indiceDuMonome);
 			monomeActuel = monomeActuel.replaceAll("x.*", "");
@@ -112,8 +115,8 @@ public class Polynome {
 	        } else if (monomeActuel.equals("-")) {
 	            monomeActuel = "-1";
 	        }
-			
-			coefficient.add(monomeActuel);
+	        int coefficientMonomeActuel = Integer.parseInt(monomeActuel);
+			coefficient.add(coefficientMonomeActuel);
 		}
 		
 		return coefficient;
@@ -158,7 +161,7 @@ public class Polynome {
 	    }
 	    
 	    // convertion String -> int pour conparaison
-        int coefficientMonomeDegrMax = Integer.parseInt(this.coefficient().get(indexDegMax));
+        int coefficientMonomeDegrMax = this.coefficient().get(indexDegMax);
 
 	    // Détermination de la limite
 	    resultatLimite = (limiteChercher == '+') ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
