@@ -32,24 +32,35 @@ public class Polynome {
     private String polynome;
 
     /**
-     * Constructeur de polynômes
-     * @param polynome - polynômes rentrer par l'uti 
-     * @throws IllegalArgumentException si le polynôme rentrer est nul (="0") ou vide(="").
+     * Constructeur de la classe Polynome.
+     * Valide et initialise un polynôme à partir d'une chaîne de caractères.
+     * Le format accepté est : [-]ax^A [+|-] bx^B [+|-] ... avec espaces optionnels.
+     * Exemples valides : "3x^2+2x-1", "-x^3+5", "7x", "42".
+     *
+     * @param polynome chaîne représentant le polynôme à créer
+     * @throws IllegalArgumentException si le format est invalide
      */
      public Polynome(String polynome) {
     	 String regex = "^\\s?-?(?:\\d*x(?:\\^\\d+)?|\\d+)(?:\\s?[+\\-]\\s?(?:\\d*x(?:\\^\\d+)?|\\d+))*$";
  
     	 if (!polynome.matches(regex)) {
-    	     throw new IllegalArgumentException("Erreur : caracteres inconnues ou caractere 'x' absent");
+    	     throw new IllegalArgumentException("Erreur : format invalide. Ex: ax^A+bx^B+cx^C+dx^D+[...]");
     	 }
+    	 
+    	 
     	this.polynome = polynome;
     	this.remplirMonomes();
       }
 	
-    /*
-     * Méthode appelée par le constructeur à chaque création d'objet Polynome.
-     * Méthode permétant de remplir directement this.monomes avec les monomes du polynome
-     */
+     /**
+      * Méthode privée appelée une seule fois par le constructeur.
+      * Décompose le polynôme en une liste de monômes stockée dans this.monomes.
+      * Les espaces sont supprimés avant le traitement.
+      * Le signe '-' est conservé en préfixe du monôme suivant.
+      * Les entrées vides éventuelles sont supprimées en fin de traitement.
+      *
+      * Exemple : "3x^2 + 2x - 10" produit ["3x^2", "2x", "-10"]
+      */
 	private void remplirMonomes() {
 		   String stockageDeCaractere = "";				//STUB
 		   char recuperationDeCaractereActuel;
@@ -72,8 +83,12 @@ public class Polynome {
 		   this.monomes.remove("");
 	}
 
-	/* Méthode recherchant les degres d'un objet Polynome() et renvoyant sont degres le plus haut
-	 * @return degMax - renvoie le degres max du polynome sous la forme d'un int 
+	/**
+	 * Calcule et retourne le degré le plus élevé du polynôme.
+	 * Les monômes de la forme 'Ax' (sans exposant écrit) sont traités comme 'Ax^1'.
+	 * Retourne 0 si le polynôme est une constante pure.
+	 *
+	 * @return le degré maximal du polynôme sous forme d'entier
 	 */
 	public int degres() {
 	    int degMax = 0;
@@ -107,11 +122,15 @@ public class Polynome {
 		return degMax;
 	}
 	
-	/*
-	 * 
+	/**
+	 * Extrait et retourne la liste des coefficients du polynôme dans l'ordre des monômes.
+	 * Un coefficient implicite (ex : "x^2") est traité comme 1.
+	 * Un coefficient négatif implicite (ex : "-x^3") est traité comme -1.
+	 *
+	 * @return ArrayList<Integer> des coefficients dans l'ordre des monômes
 	 */
-	public ArrayList<String> coefficient() {
-		ArrayList<String> coefficient = new ArrayList<>();
+	public ArrayList<Integer> coefficient() {
+		ArrayList<Integer> coefficient = new ArrayList<>();
 		for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
 			String monomeActuel = this.monomes.get(indiceDuMonome);
 			monomeActuel = monomeActuel.replaceAll("x.*", "");
@@ -121,8 +140,8 @@ public class Polynome {
 	        } else if (monomeActuel.equals("-")) {
 	            monomeActuel = "-1";
 	        }
-			
-			coefficient.add(monomeActuel);
+	        int monomeActuelInt = Integer.parseInt(monomeActuel);
+			coefficient.add(monomeActuelInt);
 		}
 		
 		return coefficient;
@@ -135,10 +154,18 @@ public class Polynome {
 		return null;	//STUB
 	}
 	
-	/* Méthode permettant de déterminer la limite d'un polynome en + ou - l'infini
-	 * @param limiteChercher  - paramettre indiquant quelle limite on cherche à trouver (+ ou - l'infini) 
-	 * @return resultatLimite - renvoie "+Infini" ou "-Infini" en fonction 
-	 * 							de la limite du polynome (cas simple) 
+	/**
+	 * Détermine la limite du polynôme en +infini ou -infini.
+	 * La limite est calculée à partir du signe du coefficient dominant
+	 * et de la parité du degré dominant selon les règles suivantes :
+	 *   - En +infini               : signe du coefficient dominant
+	 *   - En -infini, degré pair   : même signe que le coefficient dominant
+	 *   - En -infini, degré impair : signe opposé au coefficient dominant
+	 *   - Constante pure           : retourne la valeur de la constante
+	 *
+	 * @param limiteChercher '+' pour la limite en +infini, '-' pour la limite en -infini
+	 * @return "+Infini" ou "-Infini" selon la limite calculée, ou la valeur si constante
+	 * @throws IllegalArgumentException si limiteChercher est différent de '+' et '-'
 	 */
 	public String limite(char limiteChercher) {
 		
@@ -178,23 +205,31 @@ public class Polynome {
 	    }
 	
 	    // convertion String -> int pour conparaison
-        int coefficientMonomeDegrMax = Integer.parseInt(this.coefficient().get(indexDegMax));
+        int coefficientMonomeDegrMax = this.coefficient().get(indexDegMax);
         
         if (degMax > 0) {
 		    // Détermination de la limite
 		    resultatLimite = (limiteChercher == '+') ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
 		    										 : (degMax % 2 == 0) ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
 	        											                 : (coefficientMonomeDegrMax > 0) ? "-Infini" : "+Infini";
-        } else {  // monome = constante donc revoyer monome ou monome = x ou -x  ????
+        } else {  // monome = constante donc revoyer limite = le monome
         	resultatLimite = this.monomes.get(0);
         }
 	    return resultatLimite;
 	}
 	
-	/* Méthode calculant la dérivé d'un objet Polynome et renoyant une ArrayList<String> de monomes du polynome dérivé.
-	 * Cette Méthode ne permet pas de calculer la primitive d'un objet Polynome. 
-	 * @param exposantDerive - exposant de la deriver du polynome dériver - EX: f'(f'(p)) -> exposant = 2
-	 * @return - renvoie une la liste des monomes du polynome dérivé
+	/**
+	 * Calcule la dérivée d'ordre n du polynôme et retourne la liste de ses monômes.
+	 * Applique les règles de dérivation standard :
+	 *   - d/dx(Ax^b) = A*b * x^(b-1)
+	 *   - d/dx(Ax)   = A
+	 *   - d/dx(A)    = 0  (terme ignoré dans le résultat)
+	 * Les coefficients implicites (ex : "x", "-x") sont traités comme 1 et -1.
+	 * Cette méthode ne calcule pas la primitive (exposantDerive doit être strictement positif).
+	 *
+	 * @param exposantDerive ordre de la dérivation (1 = f', 2 = f'', ...)
+	 * @return ArrayList<String> des monômes du polynôme dérivé
+	 * @throws IllegalArgumentException si exposantDerive est inférieur ou égal à 0
 	 */
 	public ArrayList<String> derive(int exposantDerive) {
 	    if (exposantDerive <= 0) {
@@ -260,31 +295,39 @@ public class Polynome {
 	    return monomesDerive;
 	}
 	
-    /**
-     * Getter
-     * Méthode imuable de récupération de monomes à partir d'un objet polynome
-     * ex : Polynome(3x^3 +5x- 10).getMonome() -> [3x^3, 5x, -10]
-     * @return - liste des monomes du polynomes
-     */
+	/**
+	 * Retourne la liste des monômes du polynôme.
+	 * Cette liste est construite une seule fois par le constructeur et ne change pas.
+	 * Ne pas modifier la liste retournée directement depuis l'extérieur de la classe.
+	 *
+	 * Exemple : Polynome("3x^2+2x-1").getMonomes() produit ["3x^2", "2x", "-1"]
+	 *
+	 * @return ArrayList<String> des monômes dans l'ordre de saisie
+	 */
 	public  ArrayList<String> getMonomes() {
 	    return this.monomes;
 	}	
 	
-	/* Setter
-	 * Met à jour la liste 'monomes' en ajoutant à l'indice donnée le monome souhaité 
-	 * @param monomeAAjouter - monome que l'on souhaite insérer
-	 * @param indiceList - indice de la liste oû placer le monome à ajouter
+	/**
+	 * Remplace un monôme dans la liste interne à l'indice spécifié.
+	 * Aucune validation du format du monôme n'est effectuée.
+	 * A utiliser avec précaution pour ne pas corrompre la cohérence de l'objet.
+	 *
+	 * @param monomeAAjouter le monôme sous forme String à insérer
+	 * @param indiceList     l'indice (base 0) de la position à remplacer dans this.monomes
 	 */
 	public void setMonomes(String monomeAAjouter, int indiceList) {
 		this.monomes.set(indiceList, monomeAAjouter);
 	}
 	
 
-    /**
-     * Affichage du polynôme sous forme de texte simple.
-     * Format : Polynome(3x^2+2x^1+10).toString() -> 3x^2+2x^1+10
-     * @return messageAffiche - affichage du polynome sous Format 
-     */
+	/**
+	 * Retourne la représentation textuelle du polynôme.
+	 * Correspond exactement à la chaîne originale saisie lors de la construction,
+	 * espaces inclus.
+	 *
+	 * @return String le polynôme sous sa forme de saisie originale
+	 */
     @Override
 	public String toString() {
 		 String messageAffiche = this.polynome;
