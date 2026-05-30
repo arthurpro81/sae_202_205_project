@@ -10,18 +10,9 @@ import java.util.regex.Pattern;
 
 
 /*
- * Classe Polynome
- * Explication d'un polynome :
- * 		Ex : 3x^2 + 6x + 7
- * 
- * 			Nombre de termes ou de monomes : 3
- * 			degres : 2
- * 			coefficient : [3.0, 6.0]
- * 			racine : [-1]
- * 			limite : -Infinite = +Infini // + Infini = +Infinite
- * 			
- * TODO faire la vrai doc ...
- * 
+ * Polynome de la forme Ax^a+Bx^b+Cx^c+[...]+d
+ * @author Rémi Gavens, Amaury Daveau, Leo Gomez, Arthur Chamayou--Valentin, Florian Ferreira
+ * @version beaucoup trop, aled...
  */
 public class Polynome {
 	
@@ -40,19 +31,73 @@ public class Polynome {
      * @param polynome chaîne représentant le polynôme à créer
      * @throws IllegalArgumentException si le format est invalide
      */
-     public Polynome(String polynome) {
-    	 String regex = "^\\s?-?(?:\\d*x(?:\\^\\d+)?|\\d+)(?:\\s?[+\\-]\\s?(?:\\d*x(?:\\^\\d+)?|\\d+))*$";
- 
-    	 if (!polynome.matches(regex)) {
-    	     throw new IllegalArgumentException("Erreur : format invalide. Ex: ax^A+bx^B+cx^C+dx^D+[...]");
-    	 }
-    	 
-    	 
-    	this.polynome = polynome;
-    	this.remplirMonomes();
-      }
-	
-     /**
+    public Polynome(String polynome) {
+        String regex = "^\\s?-?(?:\\d*x(?:\\^\\d+)?|\\d+)(?:\\s?[+\\-]\\s?(?:\\d*x(?:\\^\\d+)?|\\d+))*$";
+
+        if (!polynome.matches(regex)) {
+            throw new IllegalArgumentException("Erreur : format invalide. Ex: ax^A+bx^B+cx^C+dx^D+[...]");
+        }
+        
+        this.polynome = polynome;
+        this.remplirMonomes();
+        this.simplifierMonome();
+        this.reconstructionPoly();
+    }
+
+   /*
+    * Méthode privé appellé uniquement par le constructeur
+    * Méthode permétant de construire un polynome (type String) 
+    * grâce à une liste de monome (type ArrayList<Integer>)
+    */
+	private void reconstructionPoly() {
+		String polyReconstruit = "";
+		for(String monome : this.monomes) {
+			polyReconstruit += (monome.startsWith("-")) ? monome 
+														: "+" + monome;
+		}
+		this.polynome = (polyReconstruit.startsWith("+")) ? polyReconstruit.substring(1) 
+														  : polyReconstruit;
+	}
+
+
+	/*
+	 * Méthode privé appellé par le constructeur uniquement
+	 * Méthode permétant de canonisé une liste de monome
+	 * -> un monome = degrés unique (deux monomes ne peuvent pas avoir le meme deg) 
+	 */
+    private void simplifierMonome() {
+    	int indiceMonomeActuel = 0;
+    	while(indiceMonomeActuel < this.monomes.size() -1) {
+    		int degActuel = getDegres(this.monomes.get(indiceMonomeActuel));
+    		int degSuivant = getDegres(this.monomes.get(indiceMonomeActuel +1));
+    		
+    		if (degActuel == degSuivant) {
+    			int sommeCoeff = getCoefficient(this.monomes.get(indiceMonomeActuel))
+    						   + getCoefficient(this.monomes.get(indiceMonomeActuel +1));
+    			
+    			this.monomes.remove(indiceMonomeActuel +1);
+    			this.monomes.remove(indiceMonomeActuel);
+    			
+    			if (sommeCoeff != 0) {
+    				if(degActuel != 0) {
+    					this.monomes.add(indiceMonomeActuel, sommeCoeff + "x^" + degActuel);
+    				} else {
+    					this.monomes.add(indiceMonomeActuel, sommeCoeff + "");
+    				}
+    			}
+    		} else {
+    			indiceMonomeActuel++;
+    		}
+    	}
+    	
+    	if(this.monomes.isEmpty()) {
+    		this.monomes.add("0");
+    	}
+	}
+
+
+
+	 /**
       * Méthode privée appelée une seule fois par le constructeur.
       * Décompose le polynôme en une liste de monômes stockée dans this.monomes.
       * Les espaces sont supprimés avant le traitement.
@@ -62,7 +107,7 @@ public class Polynome {
       * Exemple : "3x^2 + 2x - 10" produit ["3x^2", "2x", "-10"]
       */
 	private void remplirMonomes() {
-		   String stockageDeCaractere = "";				//STUB
+		   String stockageDeCaractere = "";
 		   char recuperationDeCaractereActuel;
 		   String polyNoSpace = this.polynome.replaceAll("\\s+", "");
 		   
@@ -81,45 +126,67 @@ public class Polynome {
 		       this.monomes.add(stockageDeCaractere);
 		   }
 		   this.monomes.remove("");
+		   
+		   // trie des monomes en fonction de leurs degres décroissant
+		   
+		   for (int indiceMonomeActuel = 1; indiceMonomeActuel < this.monomes.size(); indiceMonomeActuel++) {
+			    String monomeAInserer = this.monomes.get(indiceMonomeActuel);
+			    int degresMonomeAInserer    = getDegres(monomeAInserer);
+			    int indiceMonomeGauche = indiceMonomeActuel - 1;
+
+			    // Remonte monomeAInserer tant que son degré est supérieur à celui du voisin gauche
+			    while (indiceMonomeGauche >= 0 && getDegres(this.monomes.get(indiceMonomeGauche)) < degresMonomeAInserer) {
+			        this.monomes.set(indiceMonomeGauche + 1, this.monomes.get(indiceMonomeGauche));
+			        indiceMonomeGauche--;
+			    }
+			    this.monomes.set(indiceMonomeGauche + 1, monomeAInserer);
+			}
 	}
+	
+	/**
+	 * Retourne le degré d'un monôme String sous forme d'un int.
+	 * "x" et "ax" sont traités comme degré 1, les constantes comme degré 0.
+	 */
+	private int getDegres(String monome) {
+		int degresMonome;
+	    // convertion ax -> ax^1
+	    Pattern patternSansDegre = Pattern.compile("^-?\\d*x$");
+	    if (patternSansDegre.matcher(monome).find()) {
+	        monome = monome.replaceAll("x.*", "x^1");
+	    }
+	    // récupération du degres du monome
+	    Pattern patternDegre = Pattern.compile("\\^(\\d+)");
+	    Matcher matcher = patternDegre.matcher(monome);
+	    if (matcher.find()) {
+	        degresMonome = Integer.parseInt(matcher.group(1));
+	    } else {
+	    	degresMonome = 0;
+	    }
+	    return degresMonome;
+	}
+	
+	/**
+	 * Retourne le coefficient d'un monôme String sous forme d'un int.
+	 * "x" et "ax" sont traités comme degré 1, les constantes comme degré 0.
+	 */
+	private int getCoefficient(String monome) {
+		int coeffMonome;
+	    String coeffString = monome.replaceAll("x.*", "");
+	        
+	    coeffMonome = (coeffString.isEmpty()) ? 1 : (coeffString.equals("-")) ? -1 : Integer.parseInt(coeffString);
+	    return coeffMonome;
+	}
+	
 
 	/**
-	 * Calcule et retourne le degré le plus élevé du polynôme.
+	 * retourne le degré le plus élevé du polynôme.
 	 * Les monômes de la forme 'Ax' (sans exposant écrit) sont traités comme 'Ax^1'.
 	 * Retourne 0 si le polynôme est une constante pure.
 	 *
 	 * @return le degré maximal du polynôme sous forme d'entier
 	 */
-	public int degres() {
-	    int degMax = 0;
-	    for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
-
-	        String monomeActuel = this.monomes.get(indiceDuMonome);
-	        
-	        // Pattern qui cherche spécifiquement un ou plusieurs chiffres suivie de juste 'x'
-	        Pattern patternXSansDegres = Pattern.compile("^-?\\d*x$");
-	        Matcher matcherXSansDegres = patternXSansDegres.matcher(monomeActuel);
-	        
-	        if (matcherXSansDegres.find()) {
-	        	monomeActuel = monomeActuel.replaceAll("x.*", "x^1"); 	//Convertie "x" en "x^1"
-	        }
-	        
-	        // Pattern qui cherche ^ suivi d'un ou plusieurs chiffres
-	        Pattern patternDegres = Pattern.compile("\\^(\\d+)");
-	        Matcher matcherDegres = patternDegres.matcher(monomeActuel);
-
-	        if (matcherDegres.find()) {
-	            // group(1) récupère uniquement les chiffres après le ^
-	            int DegresActuel = Integer.parseInt(matcherDegres.group(1));
-	            
-	            if (DegresActuel > degMax) {
-	            	String monomeDegMax;
-	                degMax    = DegresActuel;
-	                monomeDegMax = monomeActuel;
-	            }
-	        }
-	    }
-		return degMax;
+	public int MaxDegres() {
+	    return getDegres(this.monomes.get(0));
 	}
 	
 	/**
@@ -131,24 +198,15 @@ public class Polynome {
 	 */
 	public ArrayList<Integer> coefficient() {
 		ArrayList<Integer> coefficient = new ArrayList<>();
-		for (int indiceDuMonome = 0; indiceDuMonome < this.monomes.size(); indiceDuMonome++) {
-			String monomeActuel = this.monomes.get(indiceDuMonome);
-			monomeActuel = monomeActuel.replaceAll("x.*", "");
-			
-	        if (monomeActuel.isEmpty()) {
-	            monomeActuel = "1";
-	        } else if (monomeActuel.equals("-")) {
-	            monomeActuel = "-1";
-	        }
-	        int monomeActuelInt = Integer.parseInt(monomeActuel);
-			coefficient.add(monomeActuelInt);
-		}
 		
+		for (String monomeActuel : this.monomes) {
+			coefficient.add(getCoefficient(monomeActuel));
+		}
 		return coefficient;
 	}
 	
 	/*
-	 * 
+	 * TODO à faire à la fin
 	 */
 	public ArrayList<Integer> racine() {
 		return null;	//STUB
@@ -168,54 +226,31 @@ public class Polynome {
 	 * @throws IllegalArgumentException si limiteChercher est différent de '+' et '-'
 	 */
 	public String limite(char limiteChercher) {
-		
 	    if (limiteChercher != '+' && limiteChercher != '-') {
 	        throw new IllegalArgumentException("Erreur : saisie != '+' || '-'");
 	    }
-
-	    int degMax      = 0,
-	        indexDegMax = 0;
-
-
-	    String resultatLimite;
-
-	    // Récupération du DegMax et de l'indexDegMax
-	    for (int indiceMonomeActuel = 0; indiceMonomeActuel < this.monomes.size(); indiceMonomeActuel++) {
+	    
+	    //Récupération du degres et du coef du monome au plus haut degres (ranger à l'indice 0)
+	    int degMax = getDegres(this.monomes.get(0));
+	    int coefficientMonome = this.coefficient().get(0);
+	    String message;
+	    
+	    // monome = constante
+	    if (degMax == 0) {
+	    	message = this.monomes.get(0);
+	    } else {
 	    	
-	    	String monomeCourrant = this.monomes.get(indiceMonomeActuel);
-	    	
-	        // Pattern qui cherche spécifiquement ax sans "^b"
-	        Pattern patternXSansDegres = Pattern.compile("^-?\\d*x$");
-	        Matcher matcherXSansDegres = patternXSansDegres.matcher(this.monomes.get(indiceMonomeActuel));
-	        
-	        if (matcherXSansDegres.find()) {
-	        	monomeCourrant = monomeCourrant.replaceAll("x.*", "x^1"); 	//Convertie "x" en "x^1"
-	        }
-	    	
-	        Pattern patternDegres = Pattern.compile("\\^(\\d+)");
-	        Matcher matcherDegres = patternDegres.matcher(monomeCourrant);
-	        
-	        if (matcherDegres.find()) {
-	        	int DegresActuel = Integer.parseInt(matcherDegres.group(1));
-	            if (DegresActuel > degMax) {
-	                degMax      = DegresActuel;
-	                indexDegMax = indiceMonomeActuel;
-	            }
-	        }
-	    }
+	    	//Vérification signe du coeff et si le degres et paire
+		    boolean coeffPositif = coefficientMonome > 0;
+		    boolean degresPair   = degMax % 2 == 0;
 	
-	    // convertion String -> int pour conparaison
-        int coefficientMonomeDegrMax = this.coefficient().get(indexDegMax);
-        
-        if (degMax > 0) {
-		    // Détermination de la limite
-		    resultatLimite = (limiteChercher == '+') ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
-		    										 : (degMax % 2 == 0) ? (coefficientMonomeDegrMax > 0) ? "+Infini" : "-Infini" 
-	        											                 : (coefficientMonomeDegrMax > 0) ? "-Infini" : "+Infini";
-        } else {  // monome = constante donc revoyer limite = le monome
-        	resultatLimite = this.monomes.get(0);
-        }
-	    return resultatLimite;
+		    if (limiteChercher == '+') {
+		        message = coeffPositif ? "+Infini" : "-Infini";
+		    } else {
+		        message = (degresPair == coeffPositif) ? "+Infini" : "-Infini";
+		    }
+	    }
+	    return message;
 	}
 	
 	/**
@@ -232,6 +267,7 @@ public class Polynome {
 	 * @throws IllegalArgumentException si exposantDerive est inférieur ou égal à 0
 	 */
 	public ArrayList<String> derive(int exposantDerive) {
+		//On n'autorise pas le calcule des primitives
 	    if (exposantDerive <= 0) {
 	        throw new IllegalArgumentException("Erreur : parametre <= 0");
 	    }
@@ -255,16 +291,16 @@ public class Polynome {
 	            Matcher matcherSansExposant = patternSansExposant.matcher(monomeCourant);
 
 	            if (matcherAvecExposant.find()) {
-	                // --- Cas Ax^b → A*b x^(b-1) ---
-	                String coeffStr = matcherAvecExposant.group(1); // groupe 1 : coefficient
-	                String degStr   = matcherAvecExposant.group(2); // groupe 2 : exposant
+	                //Cas Ax^b -> A*b x^(b-1)
+	                String coeffString = matcherAvecExposant.group(1); // groupe 1 : coefficient
+	                String degString   = matcherAvecExposant.group(2); // groupe 2 : exposant
 
-	                // Gestion coefficient implicite (ex: "x^2" → coeffStr = "")
-	                int coeff = coeffStr.isEmpty()        ? 1
-	                          : coeffStr.equals("-")      ? -1
-	                          : Integer.parseInt(coeffStr);
+	                // Gestion coefficient implicite 
+	                int coeff = coeffString.isEmpty()        ? 1
+	                          : coeffString.equals("-")      ? -1
+	                          : Integer.parseInt(coeffString);
 
-	                int deg          = Integer.parseInt(degStr);
+	                int deg          = Integer.parseInt(degString);
 	                int nouveauCoeff = coeff * deg;
 	                int nouveauDeg   = deg - 1;
 
@@ -330,7 +366,6 @@ public class Polynome {
 	 */
     @Override
 	public String toString() {
-		 String messageAffiche = this.polynome;
-		 return messageAffiche;
+		 return this.polynome;
 	}	
 }

@@ -22,14 +22,14 @@ public class Main {
         Scanner entreeUti = new Scanner(System.in);
         
         System.out.print("Entrez un polynome : ");
-        String saisiePoly = entreeUti.next();
+        String saisiePoly = entreeUti.nextLine();
         entreeUti.close();
         
         Polynome polynomeUti = new Polynome(saisiePoly);
         
         System.out.println("Affichage du polynome : " + polynomeUti.toString());
         System.out.println("Affichage de sa liste de monomes : " + polynomeUti.getMonomes() + "\n");
-        System.out.println("Affichage de sont degres : " + polynomeUti.degres());
+        System.out.println("Affichage de sont degres : " + polynomeUti.MaxDegres());
         System.out.println("Affichage de sa liste de ses coefficient : " + polynomeUti.coefficient());
         System.out.println("Affichage de sa limite en + : " + polynomeUti.limite('+'));
         System.out.println("Affichage de sa limite en - : " + polynomeUti.limite('-'));

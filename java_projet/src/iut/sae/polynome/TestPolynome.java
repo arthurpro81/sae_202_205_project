@@ -23,7 +23,7 @@ public class TestPolynome {
             testCreationValide();
             testLimite();
             testDerive();
-            testDegres();
+            testMaxDegres();
             //testRacine();
             System.out.println("Test création valide : OK");
         } catch (Exception echecAnormal) {
@@ -259,21 +259,43 @@ public class TestPolynome {
         }
     }
     
-	private void testDegres() throws Exception {
-		String[][] valide = { { "1" }, { "42" }, { "x" }, { "3x" }, { "-3x" }, { "x^2" }, { "3x^2" }, { "3x^10" },
-				{ "3x^2 + 2x + 1" }, { "3x^2+2x+1" }, { "3x^2 - 2x + 1" }, { "3x^2 - 2x - 1" }, { "-3x^2 + 2x + 1" },
-				{ "-x + 3" }, { "3x^10 - 9x^2 - 3" }, { "5x^5 + 1" }, };
+	private void testMaxDegres() throws Exception {
+	    String[][] valide = { 
+	        { "1" }, { "42" }, { "x" }, { "3x" }, { "-3x" }, { "x^2" }, { "3x^2" }, { "3x^10" },
+	        { "3x^2 + 2x + 1" }, { "3x^2+2x+1" }, { "3x^2 - 2x + 1" }, { "3x^2 - 2x - 1" }, { "-3x^2 + 2x + 1" },
+	        { "-x + 3" }, { "3x^10 - 9x^2 - 3" }, { "5x^5 + 1" } 
+	    };
 
-		for (int numeroTest = 0; numeroTest < valide.length; numeroTest++) {
-			try {
-				String[] combinaison = valide[numeroTest];
-				new Polynome(combinaison[0]);
-				// Si on arrive ici sans exception : OK, c'est ce qu'on veut
-			} catch (IllegalArgumentException echecAnormal) {
-				// Si une exception est levée sur une chaîne valide : ERREUR
-				throw new Exception("ERR combinaison valide rejetée à tort, indice : " + numeroTest + " -> "
-						+ valide[numeroTest][0]);
-			}
-		}
+	    int[] resultatAttendu = {
+	        0, 0, 1, 1, 1, 2, 2, 10,
+	        2, 2, 2, 2, 2,
+	        1, 10, 5
+	    };
+
+	    boolean correct;
+
+	    for (int numeroTest = 0; numeroTest < valide.length; numeroTest++) {
+	        try {
+	            String[] combinaison = valide[numeroTest];
+	            
+	            Polynome valeurATester = new Polynome(combinaison[0]);
+	            
+	            int resultatRecupere = valeurATester.MaxDegres(); 
+	            
+	            boolean comparaison = (resultatRecupere == resultatAttendu[numeroTest]);
+	            correct = comparaison; 
+	            
+	            if (correct) {
+	                System.out.println("test degresMax n°" + numeroTest + " passé et le resultat est " + correct);
+	            } else {
+	                System.out.println("ECHEC test degresMax n°" + numeroTest + " sur " + combinaison[0] + 
+	                                   " | Attendu : " + resultatAttendu[numeroTest] + " | Obtenu : " + resultatRecupere);
+	            }
+
+	        } catch (IllegalArgumentException echecAnormal) {
+	            throw new Exception("ERR combinaison valide rejetée à tort, indice : " + numeroTest + " -> "
+	                    + valide[numeroTest][0]);
+	        }
+	    }
 	}
 }
