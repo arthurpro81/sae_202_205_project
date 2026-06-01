@@ -9,6 +9,7 @@ package iut.sae.polynome;
 /**
  * Classe de test pour vérifier si la création de polynomes fonctionne.
  * Affiche une erreur si un test échoue.
+ *TODO convertir en JUnite 
  */
 public class TestPolynome {
 

@@ -24,7 +24,7 @@ public class Polynome {
 
     /**
      * Constructeur de la classe Polynome.
-     * Valide et initialise un polynôme à partir d'une chaîne de caractères.
+     * Valide et initialise et canonise un polynôme à partir d'une chaîne de caractères.
      * Le format accepté est : [-]ax^A [+|-] bx^B [+|-] ... avec espaces optionnels.
      * Exemples valides : "3x^2+2x-1", "-x^3+5", "7x", "42".
      *
@@ -128,7 +128,7 @@ public class Polynome {
 		   this.monomes.remove("");
 		   
 		   // trie des monomes en fonction de leurs degres décroissant
-		   
+		   //TODO remplacer par le trie à bulle de leo
 		   for (int indiceMonomeActuel = 1; indiceMonomeActuel < this.monomes.size(); indiceMonomeActuel++) {
 			    String monomeAInserer = this.monomes.get(indiceMonomeActuel);
 			    int degresMonomeAInserer    = getDegres(monomeAInserer);
@@ -143,8 +143,8 @@ public class Polynome {
 			}
 	}
 	
-	/**
-	 * Retourne le degré d'un monôme String sous forme d'un int.
+	/** Applicable sur un monome String
+	 * Retourne le degré d'un monôme sous forme d'un int.
 	 * "x" et "ax" sont traités comme degré 1, les constantes comme degré 0.
 	 */
 	private int getDegres(String monome) {
@@ -165,8 +165,8 @@ public class Polynome {
 	    return degresMonome;
 	}
 	
-	/**
-	 * Retourne le coefficient d'un monôme String sous forme d'un int.
+	/** Applicable sur un monome String
+	 * Retourne le coefficient d'un monôme sous forme d'un int.
 	 * "x" et "ax" sont traités comme degré 1, les constantes comme degré 0.
 	 */
 	private int getCoefficient(String monome) {
@@ -178,7 +178,7 @@ public class Polynome {
 	}
 	
 
-	/**
+	/** Applicable sur un Object Polynome()
 	 * retourne le degré le plus élevé du polynôme.
 	 * Les monômes de la forme 'Ax' (sans exposant écrit) sont traités comme 'Ax^1'.
 	 * Retourne 0 si le polynôme est une constante pure.
@@ -189,7 +189,7 @@ public class Polynome {
 	    return getDegres(this.monomes.get(0));
 	}
 	
-	/**
+	/** Applicable sur un Object Polynome()
 	 * Extrait et retourne la liste des coefficients du polynôme dans l'ordre des monômes.
 	 * Un coefficient implicite (ex : "x^2") est traité comme 1.
 	 * Un coefficient négatif implicite (ex : "-x^3") est traité comme -1.
@@ -205,14 +205,17 @@ public class Polynome {
 		return coefficient;
 	}
 	
-	/*
-	 * TODO à faire à la fin
+	/* Applicaable sur un Object Polynome()
+	 * retourne une ArrayList des racines du polynome sous la forme de Double
+	 * Si aucunes racine alors renvoie une ArrayList vide
+	 * @return listeRacine ArrayList<Double> des racines
+	 * TODO Faire La méthode apres le ccalcule polynomiale
 	 */
-	public ArrayList<Integer> racine() {
+	public ArrayList<Double> racine() {
 		return null;	//STUB
 	}
 	
-	/**
+	/** Applicable sur un Object Polynome()
 	 * Détermine la limite du polynôme en +infini ou -infini.
 	 * La limite est calculée à partir du signe du coefficient dominant
 	 * et de la parité du degré dominant selon les règles suivantes :
@@ -253,7 +256,7 @@ public class Polynome {
 	    return message;
 	}
 	
-	/**
+	/** Applicable sur un Object Polynome()
 	 * Calcule la dérivée d'ordre n du polynôme et retourne la liste de ses monômes.
 	 * Applique les règles de dérivation standard :
 	 *   - d/dx(Ax^b) = A*b * x^(b-1)
@@ -331,7 +334,7 @@ public class Polynome {
 	    return monomesDerive;
 	}
 	
-	/**
+	/** Applicable sur un Object Polynome()
 	 * Retourne la liste des monômes du polynôme.
 	 * Cette liste est construite une seule fois par le constructeur et ne change pas.
 	 * Ne pas modifier la liste retournée directement depuis l'extérieur de la classe.
@@ -340,24 +343,25 @@ public class Polynome {
 	 *
 	 * @return ArrayList<String> des monômes dans l'ordre de saisie
 	 */
-	public  ArrayList<String> getMonomes() {
+	public ArrayList<String> getMonomes() {
 	    return this.monomes;
 	}	
 	
-	/**
+	/** Applicable sur un Object Polynome()
 	 * Remplace un monôme dans la liste interne à l'indice spécifié.
 	 * Aucune validation du format du monôme n'est effectuée.
 	 * A utiliser avec précaution pour ne pas corrompre la cohérence de l'objet.
 	 *
 	 * @param monomeAAjouter le monôme sous forme String à insérer
 	 * @param indiceList     l'indice (base 0) de la position à remplacer dans this.monomes
+	 * TODO assurer le cohérence avec this.polynome
 	 */
 	public void setMonomes(String monomeAAjouter, int indiceList) {
 		this.monomes.set(indiceList, monomeAAjouter);
 	}
 	
 
-	/**
+	/** Applicable sur un Object Polynome()
 	 * Retourne la représentation textuelle du polynôme.
 	 * Correspond exactement à la chaîne originale saisie lors de la construction,
 	 * espaces inclus.
