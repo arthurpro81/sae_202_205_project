@@ -4,17 +4,25 @@
  */
 package iut.sae.polynome;
 
-import java.util.Scanner;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+//import java.util.Scanner;
 
 //TODO mettre le prog Main à part des autres programmes
 
 /**
  * Classe principale qui lance le programme et les tests.
  */
+
+/*
 public class Main {
 
     public static void main(String[] args) {
-       
+        /*
         Scanner entreeUti = new Scanner(System.in);
         
         System.out.print("Entrez un polynome : ");
@@ -22,7 +30,7 @@ public class Main {
         entreeUti.close();
         
         Polynome polynomeUti = new Polynome(saisiePoly);
-        Polynome polyCalc = new Polynome("9x^2-6+x^3-7");		//STUB de test
+        Polynome polyCalc = new Polynome("x-7");		//STUB de test
         String[] resultDivision = polynomeUti.division(polyCalc);
         
         System.out.println("Affichage du polynome Saisie: " + polynomeUti.toString());
@@ -43,5 +51,39 @@ public class Main {
         System.out.println("Multiplication Poly saisie * PolyCacl : " + polynomeUti.multiplication(polyCalc));
         System.out.println("Division Poly saisie / PolyCacl [Quotient | Reste] : "
         				   + "[" + resultDivision[0] + " | " + resultDivision[1] + "]");
+    	
+    }
+}
+*/
+/**
+ * Classe principale qui initialise et lance l'interface graphique du calculateur.
+ */
+public class Main extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        try {
+            // Chargement du conteneur graphique depuis le fichier FXML
+        	// Remplacer l'ancien chargement par un chemin absolu depuis la racine des packages
+        	FXMLLoader loader = new FXMLLoader(Main.class.getResource("/iut/sae/polynome/CalculateurPolynome.fxml"));            Parent root = loader.load();
+
+            // Configuration de la fenêtre principale (Stage)
+            primaryStage.setTitle("Calculateur de Polynômes - SAE");
+            primaryStage.setScene(new Scene(root, 1000, 750));
+            
+            // Définition de tailles minimales pour éviter que l'affichage ne se casse
+            primaryStage.setMinWidth(900);
+            primaryStage.setMinHeight(650);
+            
+            primaryStage.show();
+        } catch (Exception e) {
+            System.err.println("Erreur critique lors du chargement de l'interface FXML : ");
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        // Démarre le cycle de vie de l'application JavaFX
+        launch(args);
     }
 }

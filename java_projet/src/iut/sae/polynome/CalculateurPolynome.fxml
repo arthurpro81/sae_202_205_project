@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" fx:controller="iut.sae.polynome.CalculateurController" prefHeight="700.0" prefWidth="1000.0" spacing="20.0" style="-fx-background-color: #E6E6E6;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label text="Calculateur de polynôme" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="32.0" />
+         </font>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </Label>
+      
+      <HBox alignment="TOP_CENTER" spacing="25.0" VBox.vgrow="ALWAYS">
+         <children>
+            
+            <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="15.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <TextField fx:id="poly1Input" alignment="CENTER" promptText="Zone de texte du premier polynome" style="-fx-background-color: #ffe0b2; -fx-border-color: #ffb74d; -fx-padding: 12; -fx-font-weight: bold;" />
+                  
+                  <VBox fx:id="poly1DetailsContainer" spacing="12.0" style="-fx-background-color: #8C8C8C; -fx-padding: 15; -fx-background-radius: 5;" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label text="Résultat du polynôme de au-dessus :" textFill="WHITE" wrapText="true">
+                           <font><Font name="System Bold" size="13.0" /></font>
+                        </Label>
+                        <Label fx:id="poly1DegreeLabel" text="• son degrés le plus haut" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="poly1LimitsLabel" text="• ses limite (en plus et moins l'infini)" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="poly1CoeffsLabel" text="• ses coefficients" textFill="WHITE" wrapText="true" />
+                        
+                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                           <children>
+                              <Label text="• ordre de la dérivé (chiffre) :" textFill="WHITE" wrapText="true" />
+                              <TextField fx:id="poly1DerivOrder" alignment="CENTER" prefWidth="50.0" promptText="1" />
+                           </children>
+                        </HBox>
+                        
+                        <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="poly1SaveBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #5c6bc0; -fx-text-fill: white;" text="sauvegarder" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            
+            <VBox alignment="TOP_CENTER" prefWidth="320.0" spacing="15.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <VBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <ComboBox fx:id="operationSelector" prefWidth="80.0" promptText="+" style="-fx-background-color: #c8e6c9; -fx-border-color: #81c784; -fx-alignment: center;" />
+                        <Button fx:id="calcBtn" mnemonicParsing="false" style="-fx-background-color: #a5d6a7; -fx-padding: 10 20 10 20; -fx-font-weight: bold;" text="effectuer le calcul" />
+                     </children>
+                  </VBox>
+                  
+                  <VBox fx:id="calcResultContainer" managed="false" spacing="12.0" style="-fx-background-color: #8C8C8C; -fx-padding: 15; -fx-background-radius: 5;" visible="false" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-background-color: #ba68c8; -fx-padding: 8; -fx-background-radius: 3;" text="Donne le résultat du clacul entre 2 polynome" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                           <font><Font name="System Bold" size="12.0" /></font>
+                        </Label>
+                        
+                        <Label fx:id="calcDegreeLabel" text="• son degrés le plus haut" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="calcLimitsLabel" text="• ses limite (en plus et moins l'infini)" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="calcCoeffsLabel" text="• ses coefficients" textFill="WHITE" wrapText="true" />
+                        
+                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                           <children>
+                              <Label text="• ordre de la dérivé (chiffre) :" textFill="WHITE" wrapText="true" />
+                              <TextField fx:id="calcDerivOrder" alignment="CENTER" prefWidth="50.0" promptText="1" />
+                           </children>
+                        </HBox>
+                        
+                        <HBox alignment="BOTTOM_RIGHT" spacing="10.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="calcSaveBtn" mnemonicParsing="false" style="-fx-background-color: #5c6bc0; -fx-text-fill: white;" text="sauvegarder" />
+                              <Button fx:id="backBtn" mnemonicParsing="false" style="-fx-background-color: #ef5350; -fx-text-fill: white;" text="retour" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            
+            <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="15.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <TextField fx:id="poly2Input" alignment="CENTER" promptText="Zone de texte du deuxième polynome" style="-fx-background-color: #ffe0b2; -fx-border-color: #ffb74d; -fx-padding: 12; -fx-font-weight: bold;" />
+                  
+                  <VBox fx:id="poly2DetailsContainer" spacing="12.0" style="-fx-background-color: #8C8C8C; -fx-padding: 15; -fx-background-radius: 5;" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label text="Résultat du polynôme de au-dessus :" textFill="WHITE" wrapText="true">
+                           <font><Font name="System Bold" size="13.0" /></font>
+                        </Label>
+                        <Label fx:id="poly2DegreeLabel" text="• son degrés le plus haut" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="poly2LimitsLabel" text="• ses limite (en plus et moins l'infini)" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="poly2CoeffsLabel" text="• ses coefficients" textFill="WHITE" wrapText="true" />
+                        
+                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                           <children>
+                              <Label text="• ordre de la dérivé (chiffre) :" textFill="WHITE" wrapText="true" />
+                              <TextField fx:id="poly2DerivOrder" alignment="CENTER" prefWidth="50.0" promptText="1" />
+                           </children>
+                        </HBox>
+                        
+                        <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="poly2SaveBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #5c6bc0; -fx-text-fill: white;" text="sauvegarder" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+      </HBox>
+      <VBox alignment="CENTER" prefHeight="0.0" prefWidth="1000.0">
+         <children>
+            <Button fx:id="importer" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="905.0" style="-fx-background-color: #5c6bc0; -fx-text-fill: white;" text="importer">
+               <VBox.margin>
+                  <Insets left="400.0" right="400.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </children>
+</VBox>

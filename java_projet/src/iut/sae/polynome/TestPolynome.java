@@ -3,20 +3,6 @@
  * IUT Toulouse Capitole — no copyright (copyleft)
  * Tests JUnit 6 de la classe Polynome.
  * Couvre toutes les méthodes publiques sauf racine().
- *
- * Dépendance Maven (pom.xml) :
- *   <dependency>
- *       <groupId>org.junit.jupiter</groupId>
- *       <artifactId>junit-jupiter</artifactId>
- *       <version>6.1.0</version>
- *       <scope>test</scope>
- *   </dependency>
- *
- * Différences JUnit 5 → JUnit 6 appliquées ici :
- *   - Versioning unifié : un seul artefact junit-jupiter en version 6.x
- *   - Les annotations (@Test, @ParameterizedTest, @CsvSource, etc.) sont inchangées
- *   - Java 17 minimum requis (déjà satisfait par JDK 25)
- *   - FastCSV remplace univocity-parsers pour @CsvSource (parsing plus strict)
  */
 package iut.sae.polynome;
 
