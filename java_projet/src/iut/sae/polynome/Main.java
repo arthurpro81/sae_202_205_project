@@ -1,6 +1,6 @@
 /**
  * Main.java											05/05/2026
- * IUT Toulouse Captiole no copyright(copyleft )
+ * IUT Toulouse Captiole no copyright(copyleft)
  */
 package iut.sae.polynome;
 
