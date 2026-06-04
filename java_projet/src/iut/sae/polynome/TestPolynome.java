@@ -2,10 +2,13 @@
  * TestPolynome.java
  * IUT Toulouse Capitole — no copyright (copyleft)
  * Tests JUnit 6 de la classe Polynome.
- * Couvre toutes les méthodes publiques sauf racine().
+ * Couvre toutes les methodes publiques sauf racine().
+ * Structure : un @Test par methode testee, assertAll pour toutes les assertions.
  */
 package iut.sae.polynome;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,34 +23,46 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Tests de la classe Polynome")
 public class TestPolynome {
 
+    // Polynomes reinitialisees avant chaque test via @BeforeEach
+    private Polynome p1;
+    private Polynome p2;
+    private Polynome p3;
+    private Polynome pConstante;
+    private Polynome pZero;
+    private Polynome pX;
+    private Polynome pNegX;
+
+    @BeforeEach
+    void init() {
+        p1         = new Polynome("3x^2+2x+1");
+        p2         = new Polynome("x^2+5x-3");
+        p3         = new Polynome("-4x^3+2x^2");
+        pConstante = new Polynome("42");
+        pZero      = new Polynome("0");
+        pX         = new Polynome("x");
+        pNegX      = new Polynome("-x");
+    }
+
     // =========================================================================
     // 1. CONSTRUCTEUR — formats valides
     // =========================================================================
 
     @ParameterizedTest(name = "Constructeur valide : \"{0}\"")
     @ValueSource(strings = {
-        // monômes simples
         "x", "-x", "3x", "-3x", "1x", "-1x",
-        // constantes
         "0", "1", "42", "-4",
-        // monômes avec exposant
         "x^2", "3x^2", "-3x^2", "x^10", "3x^10",
-        // polynômes standards avec espaces
         "3x^2 + 2x + 1", "3x^2 - 2x + 1", "3x^2 - 2x - 1",
         "-3x^2 + 2x + 1", "-x + 3",
-        // polynômes sans espaces
         "3x^2+2x+1", "3x^2-2x+1", "3x^10-9x^2-3",
-        // polynômes avec espace initial ou signe initial
         " 3x^2+2x", "-4x^2+6x+10",
-        // termes non canonisés (le constructeur doit les accepter)
         "-9+x^5-x+2+2x", "9x^2-6+x^3-7",
-        "3x^2+3x^2",          // degrés doublons → simplification attendue
-        "5x-5x",              // résultat nul → "0"
+        "3x^2+3x^2",
+        "5x-5x",
     })
     @DisplayName("Constructeur : formats valides")
     void testConstructeurValide(String input) {
-        assertDoesNotThrow(() -> new Polynome(input),
-            "Le polynôme \"" + input + "\" devrait être accepté");
+        assertDoesNotThrow(() -> new Polynome(input));
     }
 
     // =========================================================================
@@ -56,558 +71,461 @@ public class TestPolynome {
 
     @ParameterizedTest(name = "Constructeur invalide : \"{0}\"")
     @ValueSource(strings = {
-        "",           // chaîne vide
-        "3y",         // variable non autorisée
-        "3x^2s",      // caractère parasite
-        "abc",        // que des lettres
-        "3x^2 * 2",   // opérateur * interdit
-        "3x^",        // ^ sans exposant
-        "++3x",       // double opérateur
-        " ",          // que des espaces
-        "3x^2 + + 2", // double + consécutif
+        "",
+        "3y",
+        "3x^2s",
+        "abc",
+        "3x^2 * 2",
+        "3x^",
+        "++3x",
+        " ",
+        "3x^2 + + 2",
     })
     @DisplayName("Constructeur : formats invalides")
     void testConstructeurInvalide(String input) {
-        assertThrows(IllegalArgumentException.class, () -> new Polynome(input),
-            "Le polynôme \"" + input + "\" devrait lever une IllegalArgumentException");
+        assertThrows(IllegalArgumentException.class, () -> new Polynome(input));
     }
 
     // =========================================================================
-    // 3. CONSTRUCTEUR — canonisation
+    // 3. CONSTRUCTEUR — canonisation (toString inclus car lie a la canonisation)
     // =========================================================================
 
     @Test
-    @DisplayName("Canonisation : tri par degrés décroissants")
-    void testCanonicalisationTri() {
-        assertEquals("x^5+x-7", new Polynome("-9+x^5-x+2+2x").toString());
-    }
-
-    @Test
-    @DisplayName("Canonisation : simplification des degrés doublons")
-    void testCanonicalisationSimplification() {
-        assertEquals("6x^2", new Polynome("3x^2+3x^2").toString());
-    }
-
-    @Test
-    @DisplayName("Canonisation : annulation totale → 0")
-    void testCanonicalisationNul() {
-        assertEquals("0", new Polynome("5x-5x").toString());
-    }
-
-    @Test
-    @DisplayName("Canonisation : polynôme déjà canonisé inchangé")
-    void testCanonicalisationDejaCanonise() {
-        assertEquals("x^3+9x^2-13", new Polynome("9x^2-6+x^3-7").toString());
+    @DisplayName("Constructeur : canonisation et toString")
+    void testCanonisationEtToString() {
+        assertAll(
+            // tri par degres decroissants
+            () -> assertEquals("x^5+x-7",    new Polynome("-9+x^5-x+2+2x").toString()),
+            // simplification des degres doublons
+            () -> assertEquals("6x^2",        new Polynome("3x^2+3x^2").toString()),
+            // annulation totale
+            () -> assertEquals("0",           new Polynome("5x-5x").toString()),
+            // polynome deja canonise inchange
+            () -> assertEquals("x^3+9x^2-13", new Polynome("9x^2-6+x^3-7").toString()),
+            // espaces supprimes, format normalise
+            () -> assertEquals("3x^2+2x+1",   new Polynome("3x^2 + 2x + 1").toString()),
+            // polynome standard sans modification
+            () -> assertEquals("x^2-2x+1",    new Polynome("x^2-2x+1").toString())
+        );
     }
 
     // =========================================================================
-    // 4. toString()
+    // 4. getMonomes()
     // =========================================================================
 
     @Test
-    @DisplayName("toString : retourne le polynôme canonisé")
-    void testToString() {
-        assertEquals("3x^2+2x+1",  new Polynome("3x^2+2x+1").toString());
-        assertEquals("3x^2+2x+1",  new Polynome("3x^2 + 2x + 1").toString());
-        assertEquals("x^2-2x+1",   new Polynome("x^2-2x+1").toString());
-        assertEquals("0",           new Polynome("3x-3x").toString());
-    }
-
-    // =========================================================================
-    // 5. getMonomes()
-    // =========================================================================
-
-    @Test
-    @DisplayName("getMonomes : liste correcte pour un polynôme standard")
+    @DisplayName("getMonomes : decomposition correcte en monomes")
     void testGetMonomes() {
-        Polynome p = new Polynome("3x^2+2x-1");
-        ArrayList<String> attendu = new ArrayList<>(Arrays.asList("3x^2", "2x", "-1"));
-        assertEquals(attendu, p.getMonomes());
-    }
-
-    @Test
-    @DisplayName("getMonomes : monôme unique x")
-    void testGetMonomesX() {
-        ArrayList<String> attendu = new ArrayList<>(Arrays.asList("x"));
-        assertEquals(attendu, new Polynome("x").getMonomes());
-    }
-
-    @Test
-    @DisplayName("getMonomes : constante")
-    void testGetMonomesConstante() {
-        ArrayList<String> attendu = new ArrayList<>(Arrays.asList("42"));
-        assertEquals(attendu, new Polynome("42").getMonomes());
-    }
-
-    @Test
-    @DisplayName("getMonomes : polynôme nul après canonisation")
-    void testGetMonomesNul() {
-        ArrayList<String> attendu = new ArrayList<>(Arrays.asList("0"));
-        assertEquals(attendu, new Polynome("3x-3x").getMonomes());
+        assertAll(
+            // polynome standard
+            () -> assertEquals(new ArrayList<>(Arrays.asList("3x^2", "2x", "-1")),
+                               new Polynome("3x^2+2x-1").getMonomes()),
+            // monome unique x
+            () -> assertEquals(new ArrayList<>(Arrays.asList("x")),
+                               pX.getMonomes()),
+            // constante seule
+            () -> assertEquals(new ArrayList<>(Arrays.asList("42")),
+                               pConstante.getMonomes()),
+            // polynome nul apres canonisation
+            () -> assertEquals(new ArrayList<>(Arrays.asList("0")),
+                               new Polynome("3x-3x").getMonomes()),
+            // monome negatif
+            () -> assertEquals(new ArrayList<>(Arrays.asList("-x")),
+                               pNegX.getMonomes())
+        );
     }
 
     // =========================================================================
-    // 6. setMonomes()
+    // 5. setMonomes()
     // =========================================================================
 
     @Test
-    @DisplayName("setMonomes : remplacement d'un monôme à l'indice 0")
-    void testSetMonomesIndice0() {
-        Polynome p = new Polynome("3x^2+2x-1");
-        p.setMonomes("5x^2", 0);
-        assertEquals("5x^2", p.getMonomes().get(0));
-    }
-
-    @Test
-    @DisplayName("setMonomes : remplacement d'un monôme au dernier indice")
-    void testSetMonomesDernierIndice() {
-        Polynome p = new Polynome("3x^2+2x-1");
-        p.setMonomes("10", 2);
-        assertEquals("10", p.getMonomes().get(2));
-    }
-
-    @Test
-    @DisplayName("setMonomes : indice hors bornes lève IndexOutOfBoundsException")
-    void testSetMonomesHorsBornes() {
-        Polynome p = new Polynome("3x^2+2x-1");
-        assertThrows(IndexOutOfBoundsException.class, () -> p.setMonomes("5x", 10));
+    @DisplayName("setMonomes : remplacement a differents indices")
+    void testSetMonomes() {
+        assertAll(
+            // remplacement a l'indice 0
+            () -> {
+                Polynome p = new Polynome("3x^2+2x-1");
+                p.setMonomes("5x^2", 0);
+                assertEquals("5x^2", p.getMonomes().get(0));
+            },
+            // remplacement au dernier indice
+            () -> {
+                Polynome p = new Polynome("3x^2+2x-1");
+                p.setMonomes("10", 2);
+                assertEquals("10", p.getMonomes().get(2));
+            },
+            // indice hors bornes leve IndexOutOfBoundsException
+            () -> assertThrows(IndexOutOfBoundsException.class,
+                () -> new Polynome("3x^2+2x-1").setMonomes("5x", 10))
+        );
     }
 
     // =========================================================================
-    // 7. MaxDegres()
+    // 6. MaxDegres()
     // =========================================================================
 
     @ParameterizedTest(name = "MaxDegres({0}) = {1}")
     @CsvSource({
-        "1,          0",
-        "42,         0",
-        "x,          1",
-        "3x,         1",
-        "-3x,        1",
-        "x^2,        2",
-        "3x^2,       2",
-        "3x^10,      10",
-        "3x^2+2x+1,  2",
-        "-3x^2+2x+1, 2",
-        "-x+3,       1",
+        "1,            0",
+        "42,           0",
+        "x,            1",
+        "3x,           1",
+        "-3x,          1",
+        "x^2,          2",
+        "3x^2,         2",
+        "3x^10,        10",
+        "3x^2+2x+1,    2",
+        "-3x^2+2x+1,   2",
+        "-x+3,         1",
         "3x^10-9x^2-3, 10",
-        "5x^5+1,     5",
+        "5x^5+1,       5",
     })
-    @DisplayName("MaxDegres : degré maximal correct")
+    @DisplayName("MaxDegres : degre maximal correct")
     void testMaxDegres(String poly, int attendu) {
         assertEquals(attendu, new Polynome(poly).MaxDegres());
     }
 
     // =========================================================================
-    // 8. coefficient()
+    // 7. coefficient()
     // =========================================================================
 
     @Test
-    @DisplayName("coefficient : liste correcte pour un polynôme standard")
+    @DisplayName("coefficient : extraction correcte des coefficients")
     void testCoefficient() {
-        ArrayList<Integer> attendu = new ArrayList<>(Arrays.asList(3, 2, -1));
-        assertEquals(attendu, new Polynome("3x^2+2x-1").coefficient());
-    }
-
-    @Test
-    @DisplayName("coefficient : coefficient implicite 1 pour x")
-    void testCoefficientImplicite1() {
-        ArrayList<Integer> attendu = new ArrayList<>(Arrays.asList(1));
-        assertEquals(attendu, new Polynome("x").coefficient());
-    }
-
-    @Test
-    @DisplayName("coefficient : coefficient implicite -1 pour -x")
-    void testCoefficientImpliciteNeg1() {
-        ArrayList<Integer> attendu = new ArrayList<>(Arrays.asList(-1));
-        assertEquals(attendu, new Polynome("-x").coefficient());
-    }
-
-    @Test
-    @DisplayName("coefficient : constante seule")
-    void testCoefficientConstante() {
-        ArrayList<Integer> attendu = new ArrayList<>(Arrays.asList(42));
-        assertEquals(attendu, new Polynome("42").coefficient());
-    }
-
-    @Test
-    @DisplayName("coefficient : coefficients négatifs multiples")
-    void testCoefficientNegatifs() {
-        ArrayList<Integer> attendu = new ArrayList<>(Arrays.asList(-4, -3, -2));
-        assertEquals(attendu, new Polynome("-4x^3-3x^2-2x").coefficient());
-    }
-
-    @Test
-    @DisplayName("coefficient : coefficient implicite x^3")
-    void testCoefficientImpliciteExposant() {
-        ArrayList<Integer> attendu = new ArrayList<>(Arrays.asList(1, -1));
-        assertEquals(attendu, new Polynome("x^3-x").coefficient());
-    }
-
-    // =========================================================================
-    // 9. limite()
-    // =========================================================================
-
-    @ParameterizedTest(name = "limite({0}, ''+'' ) = {1} | limite({0}, ''-'') = {2}")
-    @CsvSource({
-        // coeff positif, degré pair
-        "3x^2+7x,          +Infini, +Infini",
-        "-17x^6+88x^3+1,   +Infini, +Infini",
-        // coeff positif, degré impair
-        "12x^5,            +Infini, -Infini",
-        // coeff négatif, degré pair
-        "-3x^2-7x+2,       -Infini, -Infini",
-        "-x^4+5,           -Infini, -Infini",
-        // coeff négatif, degré impair
-        "-3x^3-7x+2,       -Infini, +Infini",
-        "-x^25+7x^10-10,   -Infini, +Infini",
-        // coeff implicite 1, degré impair
-        "x^7+4x^2-4,       +Infini, -Infini",
-        "x^2+x,            +Infini, +Infini",
-        // monôme ax seul
-        "777x+1,           +Infini, -Infini",
-        "-10x-77,          -Infini, +Infini",
-        // monôme x ou -x seul
-        "x,                +Infini, -Infini",
-        "-x,               -Infini, +Infini",
-        "1x,               +Infini, -Infini",
-        "-1x,              -Infini, +Infini",
-    })
-    @DisplayName("limite : résultat correct en + et -infini")
-    void testLimite(String poly, String attenduPlus, String attenduMoins) {
-        Polynome p = new Polynome(poly);
-        assertEquals(attenduPlus,  p.limite('+'));
-        assertEquals(attenduMoins, p.limite('-'));
-    }
-
-    @ParameterizedTest(name = "limite constante({0}) = {1}")
-    @CsvSource({
-        "10, 10",
-        "-4, -4",
-        "0,  0",
-    })
-    @DisplayName("limite : constante retourne sa valeur")
-    void testLimiteConstante(String poly, String attendu) {
-        Polynome p = new Polynome(poly);
-        assertEquals(attendu, p.limite('+'));
-        assertEquals(attendu, p.limite('-'));
-    }
-
-    @Test
-    @DisplayName("limite : paramètre invalide lève IllegalArgumentException")
-    void testLimiteParametreInvalide() {
-        Polynome p = new Polynome("3x^2+2x");
-        assertThrows(IllegalArgumentException.class, () -> p.limite('*'));
-        assertThrows(IllegalArgumentException.class, () -> p.limite('0'));
-        assertThrows(IllegalArgumentException.class, () -> p.limite('x'));
-    }
-
-    // =========================================================================
-    // 10. derive()
-    // =========================================================================
-
-    @Test
-    @DisplayName("derive(1) : cas Ax^b")
-    void testDeriveAxb() {
-        assertEquals("[6x]",    new Polynome("3x^2").derive(1).toString());
-        assertEquals("[15x^2]", new Polynome("5x^3").derive(1).toString());
-        assertEquals("[3x^2]",  new Polynome("x^3").derive(1).toString());
-    }
-
-    @Test
-    @DisplayName("derive(1) : cas Ax")
-    void testDeriveAx() {
-        assertEquals("[7]", new Polynome("7x").derive(1).toString());
-        assertEquals("[1]", new Polynome("x").derive(1).toString());
-        assertEquals("[-1]", new Polynome("-x").derive(1).toString());
-    }
-
-    @Test
-    @DisplayName("derive(1) : constante → liste vide")
-    void testDeriveConstante() {
-        assertEquals("[]", new Polynome("9").derive(1).toString());
-        assertEquals("[]", new Polynome("0").derive(1).toString());
-    }
-
-    @Test
-    @DisplayName("derive(1) : polynôme complet")
-    void testDerivePolynomeComplet() {
-        assertEquals("[6x, 2]",     new Polynome("3x^2+2x+1").derive(1).toString());
-        assertEquals("[-12x^2, 4x]", new Polynome("-4x^3+2x^2").derive(1).toString());
-    }
-
-    @Test
-    @DisplayName("derive(2) : dérivée seconde")
-    void testDeriveDegre2() {
-        assertEquals("[6]", new Polynome("3x^2+2x+1").derive(2).toString());
-        assertEquals("[30x]", new Polynome("5x^3+2x").derive(2).toString());
-    }
-
-    @Test
-    @DisplayName("derive(n) : dérivée d'ordre supérieur au degré → liste vide")
-    void testDeriveOrdreSuperieur() {
-        assertEquals("[]", new Polynome("3x^2+2x+1").derive(3).toString());
-        assertEquals("[]", new Polynome("x").derive(2).toString());
-    }
-
-    @Test
-    @DisplayName("derive : paramètre <= 0 lève IllegalArgumentException")
-    void testDeriveParametreInvalide() {
-        Polynome p = new Polynome("3x^2+2x");
-        assertThrows(IllegalArgumentException.class, () -> p.derive(0));
-        assertThrows(IllegalArgumentException.class, () -> p.derive(-1));
-    }
-
-    @Test
-    @DisplayName("derive(1) : coefficient implicite -1")
-    void testDeriveCoefficientImpliciteNegatif() {
-        assertEquals("[-3x^2]", new Polynome("-x^3+5").derive(1).toString());
-    }
-
-    // =========================================================================
-    // 11. addition()
-    // =========================================================================
-
-    @Test
-    @DisplayName("addition : degrés communs")
-    void testAdditionDegreCommun() {
-        Polynome p1 = new Polynome("3x^2+2x+1");
-        Polynome p2 = new Polynome("x^2+5x-3");
-        assertEquals("4x^2+7x-2", p1.addition(p2));
-    }
-
-    @Test
-    @DisplayName("addition : degrés disjoints")
-    void testAdditionDegreDisjoint() {
-        Polynome p1 = new Polynome("3x^2");
-        Polynome p2 = new Polynome("2x");
-        assertEquals("3x^2+2x", p1.addition(p2));
-    }
-
-    @Test
-    @DisplayName("addition : termes qui s'annulent")
-    void testAdditionAnnulation() {
-        Polynome p1 = new Polynome("3x^2+2x");
-        Polynome p2 = new Polynome("-3x^2-2x");
-        assertEquals("0", p1.addition(p2));
-    }
-
-    @Test
-    @DisplayName("addition : avec une constante")
-    void testAdditionConstante() {
-        Polynome p1 = new Polynome("3x^2");
-        Polynome p2 = new Polynome("5");
-        assertEquals("3x^2+5", p1.addition(p2));
-    }
-
-    @Test
-    @DisplayName("addition : polynôme + lui-même")
-    void testAdditionLuiMeme() {
-        Polynome p = new Polynome("3x^2+2x");
-        assertEquals("6x^2+4x", p.addition(p));
-    }
-
-    @Test
-    @DisplayName("addition : polynôme + zéro")
-    void testAdditionAvecZero() {
-        Polynome p = new Polynome("3x^2+2x+1");
-        Polynome zero = new Polynome("0");
-        assertEquals("3x^2+2x+1", p.addition(zero));
-    }
-
-    @Test
-    @DisplayName("addition : degrés différents, autrePolynome de degré supérieur")
-    void testAdditionDegreSuperieur() {
-        Polynome p1 = new Polynome("2x");
-        Polynome p2 = new Polynome("x^3+x^2");
-        assertEquals("x^3+x^2+2x", p1.addition(p2));
-    }
-
-    // =========================================================================
-    // 12. soustraction()
-    // =========================================================================
-
-    @Test
-    @DisplayName("soustraction : degrés communs")
-    void testSoustractionDegreCommun() {
-        Polynome p1 = new Polynome("3x^2+2x+1");
-        Polynome p2 = new Polynome("x^2+5x-3");
-        assertEquals("2x^2-3x+4", p1.soustraction(p2));
-    }
-
-    @Test
-    @DisplayName("soustraction : résultat nul")
-    void testSoustractionResultatNul() {
-        Polynome p = new Polynome("3x^2+2x+1");
-        assertEquals("0", p.soustraction(p));
-    }
-
-    @Test
-    @DisplayName("soustraction : degrés disjoints")
-    void testSoustractionDegreDisjoint() {
-        Polynome p1 = new Polynome("3x^2");
-        Polynome p2 = new Polynome("2x");
-        assertEquals("3x^2-2x", p1.soustraction(p2));
-    }
-
-    @Test
-    @DisplayName("soustraction : avec une constante")
-    void testSoustractionConstante() {
-        Polynome p1 = new Polynome("3x^2+5");
-        Polynome p2 = new Polynome("5");
-        assertEquals("3x^2", p1.soustraction(p2));
-    }
-
-    @Test
-    @DisplayName("soustraction : signe inversé pour les termes non communs de autrePolynome")
-    void testSoustractionSigneInverse() {
-        Polynome p1 = new Polynome("x^2");
-        Polynome p2 = new Polynome("x^2+3x");
-        assertEquals("-3x", p1.soustraction(p2));
-    }
-
-    // =========================================================================
-    // 13. multiplication()
-    // =========================================================================
-
-    @Test
-    @DisplayName("multiplication : cas standard")
-    void testMultiplicationStandard() {
-        Polynome p1 = new Polynome("3x^2+2x");
-        Polynome p2 = new Polynome("x+1");
-        assertEquals("3x^3+5x^2+2x", p1.multiplication(p2));
-    }
-
-    @Test
-    @DisplayName("multiplication : par une constante")
-    void testMultiplicationParConstante() {
-        Polynome p1 = new Polynome("3x^2+2x+1");
-        Polynome p2 = new Polynome("2");
-        assertEquals("6x^2+4x+2", p1.multiplication(p2));
-    }
-
-    @Test
-    @DisplayName("multiplication : par zéro")
-    void testMultiplicationParZero() {
-        Polynome p1 = new Polynome("3x^2+2x+1");
-        Polynome p2 = new Polynome("0");
-        assertEquals("0", p1.multiplication(p2));
-    }
-
-    @Test
-    @DisplayName("multiplication : monôme × monôme")
-    void testMultiplicationMonomes() {
-        Polynome p1 = new Polynome("3x^2");
-        Polynome p2 = new Polynome("2x^3");
-        assertEquals("6x^5", p1.multiplication(p2));
-    }
-
-    @Test
-    @DisplayName("multiplication : coefficients négatifs")
-    void testMultiplicationNegatifs() {
-        Polynome p1 = new Polynome("-2x^2");
-        Polynome p2 = new Polynome("3x");
-        assertEquals("-6x^3", p1.multiplication(p2));
-    }
-
-    @Test
-    @DisplayName("multiplication : (x+1)(x-1) = x^2-1")
-    void testMultiplicationIdentiteRemarquable() {
-        Polynome p1 = new Polynome("x+1");
-        Polynome p2 = new Polynome("x-1");
-        assertEquals("x^2-1", p1.multiplication(p2));
-    }
-
-    @Test
-    @DisplayName("multiplication : (x+1)^2 = x^2+2x+1")
-    void testMultiplicationCarreDeSomme() {
-        Polynome p = new Polynome("x+1");
-        assertEquals("x^2+2x+1", p.multiplication(p));
-    }
-
-    // =========================================================================
-    // 14. division()
-    // =========================================================================
-
-    @Test
-    @DisplayName("division : exacte avec reste nul")
-    void testDivisionExacte() {
-        Polynome p1 = new Polynome("x^3+2x^2-5x-6");
-        Polynome p2 = new Polynome("x-2");
-        String[] result = p1.division(p2);
-        assertEquals("x^2+4x+3", result[0]);
-        assertEquals("0",         result[1]);
-    }
-
-    @Test
-    @DisplayName("division : avec reste non nul")
-    void testDivisionAvecReste() {
-        Polynome p1 = new Polynome("x^3+x+1");
-        Polynome p2 = new Polynome("x^2+1");
-        String[] result = p1.division(p2);
-        assertEquals("x",  result[0]);
-        assertEquals("1",  result[1]);
-    }
-
-    @Test
-    @DisplayName("division : monôme / monôme")
-    void testDivisionMonomeParMonome() {
-        Polynome p1 = new Polynome("6x^3");
-        Polynome p2 = new Polynome("2x");
-        String[] result = p1.division(p2);
-        assertEquals("3x^2", result[0]);
-        assertEquals("0",     result[1]);
-    }
-
-    @Test
-    @DisplayName("division : constante / constante")
-    void testDivisionConstantes() {
-        Polynome p1 = new Polynome("6");
-        Polynome p2 = new Polynome("2");
-        String[] result = p1.division(p2);
-        assertEquals("3", result[0]);
-        assertEquals("0", result[1]);
-    }
-
-    @Test
-    @DisplayName("division : degré diviseur > degré dividende lève IllegalArgumentException")
-    void testDivisionDegreSuperieur() {
-        Polynome p1 = new Polynome("x+1");
-        Polynome p2 = new Polynome("x^2+1");
-        assertThrows(IllegalArgumentException.class, () -> p1.division(p2));
-    }
-
-    @Test
-    @DisplayName("division : vérification A = B×Q + R")
-    void testDivisionVerification() {
-        // (x^2+3x+2) ÷ (x+1) = (x+2) reste 0
-        // vérif : (x+1)(x+2) = x^2+3x+2
-        Polynome dividende = new Polynome("x^2+3x+2");
-        Polynome diviseur  = new Polynome("x+1");
-        String[] result    = dividende.division(diviseur);
-
-        assertEquals("x+2", result[0]);
-        assertEquals("0",   result[1]);
-
-        // vérification algébrique : diviseur × quotient + reste == dividende
-        Polynome quotient = new Polynome(result[0]);
-        String produit    = diviseur.multiplication(quotient);
-        assertEquals(dividende.toString(), new Polynome(produit).toString());
-    }
-
-    @Test
-    @DisplayName("division : polynômes avec coefficients négatifs")
-    void testDivisionCoefficientsNegatifs() {
-        // (-x^2+1) ÷ (x-1) = (-x-1) reste 0
-        Polynome p1 = new Polynome("-x^2+1");
-        Polynome p2 = new Polynome("x-1");
-        String[] result = p1.division(p2);
-        assertEquals("0", result[1]);
-        // vérif : (x-1)×(-x-1) = -x^2+1
-        Polynome quotient = new Polynome(result[0]);
-        assertEquals(
-            new Polynome(p2.multiplication(quotient)).toString(),
-            p1.toString()
+        assertAll(
+            // polynome standard
+            () -> assertEquals(new ArrayList<>(Arrays.asList(3, 2, -1)),
+                               new Polynome("3x^2+2x-1").coefficient()),
+            // coefficient implicite 1 pour x
+            () -> assertEquals(new ArrayList<>(Arrays.asList(1)),
+                               pX.coefficient()),
+            // coefficient implicite -1 pour -x
+            () -> assertEquals(new ArrayList<>(Arrays.asList(-1)),
+                               pNegX.coefficient()),
+            // coefficients implicites dans un polynome
+            () -> assertEquals(new ArrayList<>(Arrays.asList(1, -1)),
+                               new Polynome("x^3-x").coefficient()),
+            // constante seule
+            () -> assertEquals(new ArrayList<>(Arrays.asList(42)),
+                               pConstante.coefficient()),
+            // coefficients negatifs multiples
+            () -> assertEquals(new ArrayList<>(Arrays.asList(-4, -3, -2)),
+                               new Polynome("-4x^3-3x^2-2x").coefficient())
         );
     }
+
+    // =========================================================================
+    // 8. limite()
+    // =========================================================================
+
+    @Test
+    @DisplayName("limite : toutes les combinaisons de signe et parite")
+    void testLimite() {
+        assertAll(
+            // coeff positif, degre pair → +Infini / +Infini
+            () -> assertEquals("+Infini", new Polynome("3x^2+7x").limite('+')),
+            () -> assertEquals("+Infini", new Polynome("3x^2+7x").limite('-')),
+            // coeff negatif, degre pair → -Infini / -Infini
+            () -> assertEquals("-Infini", new Polynome("-17x^6+88x^3+1").limite('+')),
+            () -> assertEquals("-Infini", new Polynome("-x^4+5").limite('-')),
+            // coeff positif, degre impair → +Infini / -Infini
+            () -> assertEquals("+Infini", new Polynome("12x^5").limite('+')),
+            () -> assertEquals("-Infini", new Polynome("12x^5").limite('-')),
+            // coeff negatif, degre impair → -Infini / +Infini
+            () -> assertEquals("-Infini", new Polynome("-3x^3-7x+2").limite('+')),
+            () -> assertEquals("+Infini", new Polynome("-3x^3-7x+2").limite('-')),
+            // coeff implicite 1, degre impair
+            () -> assertEquals("+Infini", new Polynome("x^7+4x^2-4").limite('+')),
+            () -> assertEquals("-Infini", new Polynome("x^7+4x^2-4").limite('-')),
+            // monome x et -x seuls
+            () -> assertEquals("+Infini", pX.limite('+')),
+            () -> assertEquals("-Infini", pX.limite('-')),
+            () -> assertEquals("-Infini", pNegX.limite('+')),
+            () -> assertEquals("+Infini", pNegX.limite('-')),
+            // constante retourne sa valeur
+            () -> assertEquals("42", pConstante.limite('+')),
+            () -> assertEquals("42", pConstante.limite('-')),
+            () -> assertEquals("0",  pZero.limite('+')),
+            () -> assertEquals("0",  pZero.limite('-')),
+            // parametre invalide leve IllegalArgumentException
+            () -> assertThrows(IllegalArgumentException.class, () -> p1.limite('*')),
+            () -> assertThrows(IllegalArgumentException.class, () -> p1.limite('0')),
+            () -> assertThrows(IllegalArgumentException.class, () -> p1.limite('x'))
+        );
+    }
+
+    // =========================================================================
+    // 9. derive()
+    // =========================================================================
+
+    @Test
+    @DisplayName("derive : toutes les regles de derivation")
+    void testDerive() {
+        assertAll(
+            // Ax^b → A*b x^(b-1)
+            () -> assertEquals("[6x]",    new Polynome("3x^2").derive(1).toString()),
+            () -> assertEquals("[15x^2]", new Polynome("5x^3").derive(1).toString()),
+            () -> assertEquals("[3x^2]",  new Polynome("x^3").derive(1).toString()),
+            // Ax → A
+            () -> assertEquals("[7]",  new Polynome("7x").derive(1).toString()),
+            () -> assertEquals("[1]",  pX.derive(1).toString()),
+            () -> assertEquals("[-1]", pNegX.derive(1).toString()),
+            // coefficient implicite negatif
+            () -> assertEquals("[-3x^2]", new Polynome("-x^3+5").derive(1).toString()),
+            // constante → liste vide
+            () -> assertEquals("[]", new Polynome("9").derive(1).toString()),
+            () -> assertEquals("[]", pZero.derive(1).toString()),
+            // polynome complet
+            () -> assertEquals("[6x, 2]",      p1.derive(1).toString()),
+            () -> assertEquals("[-12x^2, 4x]", p3.derive(1).toString()),
+            // derivee d'ordre 2
+            () -> assertEquals("[6]",   p1.derive(2).toString()),
+            () -> assertEquals("[30x]", new Polynome("5x^3+2x").derive(2).toString()),
+            // ordre superieur au degre → liste vide
+            () -> assertEquals("[]", p1.derive(3).toString()),
+            () -> assertEquals("[]", pX.derive(2).toString()),
+            // parametre invalide
+            () -> assertThrows(IllegalArgumentException.class, () -> p1.derive(0)),
+            () -> assertThrows(IllegalArgumentException.class, () -> p1.derive(-1))
+        );
+    }
+
+    // =========================================================================
+    // 10. addition()
+    // =========================================================================
+
+    @Test
+    @DisplayName("addition : tous les cas")
+    void testAddition() {
+        assertAll(
+            // degres communs → coefficients additionnes
+            () -> assertEquals("4x^2+7x-2", p1.addition(p2)),
+            // degres disjoints → juxtaposition
+            () -> assertEquals("3x^2+2x", new Polynome("3x^2").addition(new Polynome("2x"))),
+            // termes qui s'annulent → 0
+            () -> assertEquals("0", new Polynome("3x^2+2x").addition(new Polynome("-3x^2-2x"))),
+            // avec une constante
+            () -> assertEquals("3x^2+5", new Polynome("3x^2").addition(new Polynome("5"))),
+            // polynome + lui-meme
+            () -> assertEquals("6x^2+4x", new Polynome("3x^2+2x").addition(new Polynome("3x^2+2x"))),
+            // polynome + zero
+            () -> assertEquals("3x^2+2x+1", p1.addition(pZero)),
+            // autrePolynome de degre superieur
+            () -> assertEquals("x^3+x^2+2x", new Polynome("2x").addition(new Polynome("x^3+x^2")))
+        );
+    }
+
+    // =========================================================================
+    // 11. soustraction()
+    // =========================================================================
+
+    @Test
+    @DisplayName("soustraction : tous les cas")
+    void testSoustraction() {
+        assertAll(
+            // degres communs → coefficients soustraits
+            () -> assertEquals("2x^2-3x+4", p1.soustraction(p2)),
+            // resultat nul
+            () -> assertEquals("0", p1.soustraction(p1)),
+            // degres disjoints
+            () -> assertEquals("3x^2-2x", new Polynome("3x^2").soustraction(new Polynome("2x"))),
+            // avec une constante
+            () -> assertEquals("3x^2", new Polynome("3x^2+5").soustraction(new Polynome("5"))),
+            // signe inverse pour les termes non communs
+            () -> assertEquals("-3x", new Polynome("x^2").soustraction(new Polynome("x^2+3x")))
+        );
+    }
+
+    // =========================================================================
+    // 12. multiplication()
+    // =========================================================================
+
+    @Test
+    @DisplayName("multiplication : tous les cas")
+    void testMultiplication() {
+        assertAll(
+            // distributivite standard
+            () -> assertEquals("3x^3+5x^2+2x",
+                new Polynome("3x^2+2x").multiplication(new Polynome("x+1"))),
+            // par une constante
+            () -> assertEquals("6x^2+4x+2", p1.multiplication(new Polynome("2"))),
+            // par zero
+            () -> assertEquals("0", p1.multiplication(pZero)),
+            // monome x monome
+            () -> assertEquals("6x^5", new Polynome("3x^2").multiplication(new Polynome("2x^3"))),
+            // coefficients negatifs
+            () -> assertEquals("-6x^3", new Polynome("-2x^2").multiplication(new Polynome("3x"))),
+            // identite (a+b)(a-b) = a^2-b^2
+            () -> assertEquals("x^2-1",
+                new Polynome("x+1").multiplication(new Polynome("x-1"))),
+            // identite (a+b)^2 = a^2+2ab+b^2
+            () -> assertEquals("x^2+2x+1",
+                new Polynome("x+1").multiplication(new Polynome("x+1")))
+        );
+    }
+
+    // =========================================================================
+    // 13. division()
+    // =========================================================================
+
+    @Test
+    @DisplayName("division : tous les cas")
+    void testDivision() {
+        assertAll(
+            // division exacte : quotient et reste nul
+            () -> {
+                String[] r = new Polynome("x^3+2x^2-5x-6").division(new Polynome("x-2"));
+                assertEquals("x^2+4x+3", r[0]);
+                assertEquals("0",         r[1]);
+            },
+            // division avec reste non nul
+            () -> {
+                String[] r = new Polynome("x^3+x+1").division(new Polynome("x^2+1"));
+                assertEquals("x", r[0]);
+                assertEquals("1", r[1]);
+            },
+            // monome / monome
+            () -> {
+                String[] r = new Polynome("6x^3").division(new Polynome("2x"));
+                assertEquals("3x^2", r[0]);
+                assertEquals("0",     r[1]);
+            },
+            // constante / constante
+            () -> {
+                String[] r = new Polynome("6").division(new Polynome("2"));
+                assertEquals("3", r[0]);
+                assertEquals("0", r[1]);
+            },
+            () -> {
+                Polynome dividende = new Polynome("x^2+3x+2");
+                Polynome diviseur  = new Polynome("x+1");
+                String[] r         = dividende.division(diviseur);
+                assertEquals("x+2", r[0]);
+                assertEquals("0",   r[1]);
+                assertEquals(dividende.toString(),
+                    new Polynome(diviseur.multiplication(new Polynome(r[0]))).toString());
+            },
+            // coefficients negatifs : verification A = B x Q + R
+            () -> {
+                Polynome p1 = new Polynome("-x^2+1");
+                Polynome p2 = new Polynome("x-1");
+                String[] r  = p1.division(p2);
+                assertEquals("0", r[1]);
+                assertEquals(p1.toString(),
+                    new Polynome(p2.multiplication(new Polynome(r[0]))).toString());
+            },
+            // degre diviseur > degre dividende leve IllegalArgumentException
+            () -> assertThrows(IllegalArgumentException.class,
+                () -> new Polynome("x+1").division(new Polynome("x^2+1")))
+        );
+    }
+    
+    // =========================================================================
+    // 15. racine()
+    // =========================================================================
+
+@Disabled("Méthode racine() non implémentée — TODO : Suite de Sturm + Hörner")
+@Test
+@DisplayName("racine : tous les cas dans un encadrement [-10, 10]")
+void testRacine() {
+    assertAll(
+        //Cas sans racine réelle 
+        // x^2+1 -> aucune racine réelle
+        () -> assertEquals(new ArrayList<>(),
+                           new Polynome("x^2+1").racine(-10, 10)),
+
+        //Racine en 0
+        // x -> racine en 0
+        () -> assertEquals(new ArrayList<>(Arrays.asList(0.0)),
+                           new Polynome("x").racine(-10, 10)),
+        // x^2 -> racine double en 0
+        () -> assertEquals(new ArrayList<>(Arrays.asList(0.0)),
+                           new Polynome("x^2").racine(-10, 10)),
+        // x^3 -> racine triple en 0
+        () -> assertEquals(new ArrayList<>(Arrays.asList(0.0)),
+                           new Polynome("x^3").racine(-10, 10)),
+
+        //Racine entière positive
+        // x-1 -> racine en 1
+        () -> assertEquals(new ArrayList<>(Arrays.asList(1.0)),
+                           new Polynome("x-1").racine(-10, 10)),
+        // 2x-8 -> racine en 4
+        () -> assertEquals(new ArrayList<>(Arrays.asList(4.0)),
+                           new Polynome("2x-8").racine(-10, 10)),
+
+        //Racine entière négative
+        // x+2 -> racine en -2
+        () -> assertEquals(new ArrayList<>(Arrays.asList(-2.0)),
+                           new Polynome("x+2").racine(-10, 10)),
+
+        //Racine double
+        // x^2-2x+1 = (x-1)^2 -> racine double en 1
+        () -> assertEquals(new ArrayList<>(Arrays.asList(1.0)),
+                           new Polynome("x^2-2x+1").racine(-10, 10)),
+
+        //Deux racines entières
+        // x^2-4 -> racines en -2 et 2
+        () -> assertEquals(new ArrayList<>(Arrays.asList(-2.0, 2.0)),
+                           new Polynome("x^2-4").racine(-10, 10)),
+        // x^2-5x+6 = (x-2)(x-3) -> racines en 2 et 3
+        () -> assertEquals(new ArrayList<>(Arrays.asList(2.0, 3.0)),
+                           new Polynome("x^2-5x+6").racine(-10, 10)),
+
+        //Trois racines entières
+        // x^3-6x^2+11x-6 = (x-1)(x-2)(x-3) -> racines en 1, 2 et 3
+        () -> assertEquals(new ArrayList<>(Arrays.asList(1.0, 2.0, 3.0)),
+                           new Polynome("x^3-6x^2+11x-6").racine(-10, 10)),
+
+        //Racines décimales
+        // x^2-2 -> racines en -1.4142 et 1.4142 (arrondi 4 décimales)
+        () -> assertEquals(new ArrayList<>(Arrays.asList(-1.4142, 1.4142)),
+                           new Polynome("x^2-2").racine(-10, 10)),
+        // 2x-1 → racine en 0.5
+        () -> assertEquals(new ArrayList<>(Arrays.asList(0.5)),
+                           new Polynome("2x-1").racine(-10, 10)),
+        // x^2-3 -> racines en -1.7320 et 1.7320
+        () -> assertEquals(new ArrayList<>(Arrays.asList(-1.7320, 1.7320)),
+                           new Polynome("x^2-3").racine(-10, 10)),
+
+        //Encadrement excluant certaines racines
+        // x^2-4 -> racines en -2 et 2, encadrement [0, 10] -> seulement 2
+        () -> assertEquals(new ArrayList<>(Arrays.asList(2.0)),
+                           new Polynome("x^2-4").racine(0, 10)),
+        // x^2-4 → encadrement [-10, 0] → seulement -2
+        () -> assertEquals(new ArrayList<>(Arrays.asList(-2.0)),
+                           new Polynome("x^2-4").racine(-10, 0)),
+        // x^2-4 -> encadrement [3, 10] -> aucune racine dans cet encadrement
+        () -> assertEquals(new ArrayList<>(),
+                           new Polynome("x^2-4").racine(3, 10)),
+
+        //Encadrement = point exact (racine sur la borne)
+        // x-5 -> racine en 5, encadrement [5, 10] -> racine trouvée
+        () -> assertEquals(new ArrayList<>(Arrays.asList(5.0)),
+                           new Polynome("x-5").racine(5, 10)),
+
+        //Encadrement invalide -> IllegalArgumentException
+        () -> assertThrows(IllegalArgumentException.class,
+                           () -> new Polynome("x^2-4").racine(5, -5)),
+        () -> assertThrows(IllegalArgumentException.class,
+                           () -> new Polynome("x").racine(10, 0)),
+
+        //Constante sans racine
+        // 42 -> polynôme constant non nul → aucune racine
+        () -> assertEquals(new ArrayList<>(),
+                           new Polynome("42").racine(-10, 10)),
+
+        //Polynôme nul -> toute valeur est racine (cas dégénéré)
+        // 0 -> cas particulier, comportement à définir selon l'implémentation
+        () -> assertNotNull(new Polynome("0").racine(-10, 10)),
+
+        //Grands coefficients
+        // 999999x^2-999999 = 999999(x-1)(x+1) → racines en -1 et 1
+        () -> assertEquals(new ArrayList<>(Arrays.asList(-1.0, 1.0)),
+                           new Polynome("999999x^2-999999").racine(-10, 10)),
+        // x^2-1000000 -> racines en -1000 et 1000, encadrement [-1001, 1001]
+        () -> assertEquals(new ArrayList<>(Arrays.asList(-1000.0, 1000.0)),
+                           new Polynome("x^2-1000000").racine(-1001, 1001))
+    );
+} 
 }

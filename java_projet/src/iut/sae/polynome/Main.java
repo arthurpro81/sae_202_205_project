@@ -12,8 +12,6 @@ import javafx.stage.Stage;
 
 //import java.util.Scanner;
 
-//TODO mettre le prog Main à part des autres programmes
-
 /**
  * Classe principale qui lance le programme et les tests.
  */
@@ -22,7 +20,7 @@ import javafx.stage.Stage;
 public class Main {
 
     public static void main(String[] args) {
-        /*
+        
         Scanner entreeUti = new Scanner(System.in);
         
         System.out.print("Entrez un polynome : ");
@@ -51,13 +49,16 @@ public class Main {
         System.out.println("Multiplication Poly saisie * PolyCacl : " + polynomeUti.multiplication(polyCalc));
         System.out.println("Division Poly saisie / PolyCacl [Quotient | Reste] : "
         				   + "[" + resultDivision[0] + " | " + resultDivision[1] + "]");
+        System.out.println("P(x) x = " + polynomeUti.xEgale(2));
+        System.out.println("racine -50|50: " + polynomeUti.racine(-50, 50));
     	
     }
-}
-*/
+}*/
+
 /**
  * Classe principale qui initialise et lance l'interface graphique du calculateur.
  */
+
 public class Main extends Application {
 
     @Override

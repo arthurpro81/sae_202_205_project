@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1.0">
+  <help_text>TestPolynome
+--
+--
++testConstructeurValide(input : String) : void
++testConstructeurInvalide(input : String) : void
+
++testCanonicalisationTri() : void
++testCanonicalisationSimplification() : void
++testCanonicalisationNul() : void
++testCanonicalisationDejaCanonise() : void
+
++testToString() : void
+
++testGetMonomes() : void
++testGetMonomesX() : void
++testGetMonomesConstante() : void
++testGetMonomesNul() : void
+
++testSetMonomesIndice0() : void
++testSetMonomesDernierIndice() : void
++testSetMonomesHorsBornes() : void
+
++testMaxDegres(poly : String, attendu : int) : void
+
++testCoefficient() : void
++testCoefficientImplicite1() : void
++testCoefficientImpliciteNeg1() : void
+
++testLimite(poly : String,
+            attenduPlus : String,
+            attenduMoins : String) : void
+
++testDeriveAxb() : void
++testDeriveAx() : void
++testDeriveConstante() : void
+
++testAdditionDegreCommun() : void
++testSoustractionDegreCommun() : void
++testMultiplicationStandard() : void
++testDivisionExacte() : void</help_text>
+  <zoom_level>5</zoom_level>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>205</x>
+      <y>210</y>
+      <w>25</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>290</x>
+      <y>95</y>
+      <w>60</w>
+      <h>55</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;90.0;100.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>85</x>
+      <y>80</y>
+      <w>210</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>Polynome
+--
+- monomes : ArrayList&lt;String&gt;
+- polynome : String
+--
++ Polynome(polynome : String)
++ addition(autrePolynome : Polynome) : String
++ soustraction(autrePolynome : Polynome) : String
++ multiplication(autrePolynome : Polynome) : String
++ division(autrePolynome : Polynome) : String[]
++ derive(exposantDerive : int) : ArrayList&lt;String&gt;
++ limite(limiteChercher : char) : String
++ coefficient() : ArrayList&lt;Integer&gt;
++ MaxDegres() : int
++ getMonomes() : ArrayList&lt;String&gt;
++ setMonomes(monomeAAjouter : String, indiceList : int) : void
++ toString() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>110</x>
+      <y>250</y>
+      <w>190</w>
+      <h>195</h>
+    </coordinates>
+    <panel_attributes>TestPolynome
+--
+- p1 : Polynome
+- p2 : Polynome
+- p3 : Polynome
+- pConstante : Polynome
+- pZero : Polynome
+- pX : Polynome
+- pNegX : Polynome
+--
++ init() : void
++ testConstructeurValide(input : String) : void
++ testConstructeurInvalide(input : String) : void
++ testCanonisationEtToString() : void
++ testGetMonomes() : void
++ testSetMonomes() : void
++ testMaxDegres(poly : String, attendu : int) : void
++ testCoefficient() : void
++ testLimite() : void
++ testDerive() : void
++ testAddition() : void
++ testSoustraction() : void
++ testMultiplication() : void
++ testDivision() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>340</x>
+      <y>80</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Main
+--
+--
++start(pimaryStage : Stage) : void
++main(args : String[]) : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>345</x>
+      <y>35</y>
+      <w>120</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Application</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>390</x>
+      <y>50</y>
+      <w>15</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>290</x>
+      <y>175</y>
+      <w>50</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;80.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>330</x>
+      <y>140</y>
+      <w>190</w>
+      <h>345</h>
+    </coordinates>
+    <panel_attributes>CalculateurController
+--
+- poly1Input : TextField
+- poly1DetailsContainer : VBox
+- poly1DegreeLabel : Label
+- poly1LimitsLabel : Label
+- poly1CoeffsLabel : Label
+- poly1DerivOrder : TextField
+- poly1SaveBtn : Button
+
+- operationSelector : ComboBox&lt;String&gt;
+- calcBtn : Button
+
+- calcResultContainer : VBox
+- calcDegreeLabel : Label
+- calcLimitsLabel : Label
+- calcCoeffsLabel : Label
+- calcDerivOrder : TextField
+- calcSaveBtn : Button
+- backBtn : Button
+
+- poly2Input : TextField
+- poly2DetailsContainer : VBox
+- poly2DegreeLabel : Label
+- poly2LimitsLabel : Label
+- poly2CoeffsLabel : Label
+- poly2DerivOrder : TextField
+- poly2SaveBtn : Button
+
+- importer : Button
+
+- dernierResultatStr : String
+- operationActuelle : String
+--
++ initialize() : void
+- gererImportation(stage : Stage) : void
+- mettreAJourDetailsPoly1() : void
+- mettreAJourDetailsPoly2() : void
+- remplirDetailsMonomnes(input : TextField, orderInput : TextField, degLabel : Label, limLabel : Label, coeffLabel : Label) : void
+- gererCalcul() : void
+- mettreAJourDetailsResultat() : void
+- gererRetour() : void
+- sauvegarderPolynome(stage : Stage, nomFichierSuggest : String, polynome : String, degre : String, limites : String, coeffs : String) : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

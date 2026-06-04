@@ -1,12 +1,25 @@
 package iut.sae.polynome;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+/**
+ * Contrôleur de l'application de calcul de polynômes.
+ * Gère l'interface, les calculs, la sauvegarde et l'importation.
+ */
 public class CalculateurController {
 
     // ================= POLYNÔME 1 =================
@@ -17,6 +30,11 @@ public class CalculateurController {
     @FXML private Label poly1CoeffsLabel;
     @FXML private TextField poly1DerivOrder;
     @FXML private Button poly1SaveBtn;
+
+    // --- P(x) poly1 ---
+    @FXML private TextField poly1PxInput;
+    @FXML private Button poly1PxBtn;
+    @FXML private Label poly1PxLabel;
 
     // ================= COLONNE CENTRALE (OPÉRATIONS) =================
     @FXML private ComboBox<String> operationSelector;
@@ -31,6 +49,11 @@ public class CalculateurController {
     @FXML private Button calcSaveBtn;
     @FXML private Button backBtn;
 
+    // --- P(x) résultat ---
+    @FXML private TextField calcPxInput;
+    @FXML private Button calcPxBtn;
+    @FXML private Label calcPxLabel;
+
     // ================= POLYNÔME 2 =================
     @FXML private TextField poly2Input;
     @FXML private VBox poly2DetailsContainer;
@@ -40,6 +63,12 @@ public class CalculateurController {
     @FXML private TextField poly2DerivOrder;
     @FXML private Button poly2SaveBtn;
 
+
+    // --- P(x) poly2 ---
+    @FXML private TextField poly2PxInput;
+    @FXML private Button poly2PxBtn;
+    @FXML private Label poly2PxLabel;
+
     // ================= BOUTON IMPORTER =================
     @FXML private Button importer;
 
@@ -47,133 +76,150 @@ public class CalculateurController {
     private String dernierResultatStr = "";
     private String operationActuelle = "";
 
+    /**
+     * Initialisation du contrôleur.
+     */
     @FXML
     public void initialize() {
-        // 1. Initialisation du sélecteur d'opération
         operationSelector.getItems().addAll("+", "-", "*", "/");
         operationSelector.setValue("+");
 
-        // 2. Écouteurs pour mettre à jour les détails du Polynôme 1 en temps réel
-        poly1Input.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
-            @Override
-            public void changed(javafx.beans.value.ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                mettreAJourDetailsPoly1();
-            }
+        // Écouteurs temps réel
+        poly1Input.textProperty().addListener((obs, old, newValue) -> mettreAJourDetailsPoly1());
+        poly1DerivOrder.textProperty().addListener((obs, old, newValue) -> mettreAJourDetailsPoly1());
+        poly2Input.textProperty().addListener((obs, old, newValue) -> mettreAJourDetailsPoly2());
+        poly2DerivOrder.textProperty().addListener((obs, old, newValue) -> mettreAJourDetailsPoly2());
+        calcDerivOrder.textProperty().addListener((obs, old, newValue) -> mettreAJourDetailsResultat());
+
+        // Actions boutons calcul / retour
+        calcBtn.setOnAction(event -> gererCalcul());
+        backBtn.setOnAction(event -> gererRetour());
+
+        // Actions sauvegarde
+        poly1SaveBtn.setOnAction(event -> {
+            Stage stage = (Stage) poly1SaveBtn.getScene().getWindow();
+            sauvegarderPolynome(stage, "sauvegarde_poly1.txt", poly1Input.getText(),
+                    poly1DegreeLabel.getText(), poly1LimitsLabel.getText(), poly1CoeffsLabel.getText());
         });
-        poly1DerivOrder.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
-            @Override
-            public void changed(javafx.beans.value.ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                mettreAJourDetailsPoly1();
-            }
+        poly2SaveBtn.setOnAction(event -> {
+            Stage stage = (Stage) poly2SaveBtn.getScene().getWindow();
+            sauvegarderPolynome(stage, "sauvegarde_poly2.txt", poly2Input.getText(),
+                    poly2DegreeLabel.getText(), poly2LimitsLabel.getText(), poly2CoeffsLabel.getText());
+        });
+        calcSaveBtn.setOnAction(event -> {
+            Stage stage = (Stage) calcSaveBtn.getScene().getWindow();
+            sauvegarderPolynome(stage, "sauvegarde_resultat.txt", dernierResultatStr,
+                    calcDegreeLabel.getText(), calcLimitsLabel.getText(), calcCoeffsLabel.getText());
         });
 
-        // 3. Écouteurs pour mettre à jour les détails du Polynôme 2 en temps réel
-        poly2Input.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
-            @Override
-            public void changed(javafx.beans.value.ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                mettreAJourDetailsPoly2();
-            }
-        });
-        poly2DerivOrder.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
-            @Override
-            public void changed(javafx.beans.value.ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                mettreAJourDetailsPoly2();
-            }
-        });
+        // Actions P(x)
+        poly1PxBtn.setOnAction(event -> calculerPx(poly1Input, poly1PxInput, poly1PxLabel));
+        poly2PxBtn.setOnAction(event -> calculerPx(poly2Input, poly2PxInput, poly2PxLabel));
+        calcPxBtn.setOnAction(event -> calculerPxResultat());
 
-        // 4. Écouteur pour l'ordre de dérivation du résultat global
-        calcDerivOrder.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
-            @Override
-            public void changed(javafx.beans.value.ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                mettreAJourDetailsResultat();
-            }
-        });
-
-        // 5. Actions des boutons principaux
-        calcBtn.setOnAction(new javafx.event.EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                gererCalcul();
-            }
-        });
-        backBtn.setOnAction(new javafx.event.EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                gererRetour();
-            }
-        });
-
-        // Actions secondaires (Sauvegardes / Import)
-        poly1SaveBtn.setOnAction(new javafx.event.EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                System.out.println("Sauvegarde du Polynôme 1 : " + poly1Input.getText());
-            }
-        });
-        poly2SaveBtn.setOnAction(new javafx.event.EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                System.out.println("Sauvegarde du Polynôme 2 : " + poly2Input.getText());
-            }
-        });
-        calcSaveBtn.setOnAction(new javafx.event.EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                System.out.println("Sauvegarde du Résultat : " + dernierResultatStr);
-            }
-        });
-        importer.setOnAction(new javafx.event.EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                System.out.println("Action d'importation lancée");
-            }
+        // ACTION IMPORTER
+        importer.setOnAction(event -> {
+            Stage stage = (Stage) importer.getScene().getWindow();
+            gererImportation(stage);
         });
     }
 
+   
+
+    // =========================================================
+    //  P(x)
+    // =========================================================
+
     /**
-     * Calcule et affiche les propriétés du Polynôme 1.
+     * Calcule P(valeur) pour le polynôme saisi dans inputField,
+     * avec la valeur saisie dans pxField. Affiche dans resultLabel.
      */
+    private void calculerPx(TextField inputField, TextField pxField, Label resultLabel) {
+        String texte = inputField.getText();
+        if (texte == null || texte.trim().isEmpty()) {
+            resultLabel.setText("• Aucun polynôme saisi.");
+            return;
+        }
+        try {
+            Polynome p = new Polynome(texte.trim());
+            double valeurX = Double.parseDouble(pxField.getText().trim());
+            double resultat = p.xEgale(valeurX);
+
+            // Affichage propre : entier si la valeur est entière
+            String affichage = (resultat == Math.floor(resultat) && !Double.isInfinite(resultat))
+                    ? String.valueOf((long) resultat)
+                    : String.valueOf(resultat);
+
+            resultLabel.setText("• P(" + valeurX + ") = " + affichage);
+        } catch (NumberFormatException e) {
+            resultLabel.setText("• Valeur x invalide (nombre requis).");
+        } catch (IllegalArgumentException e) {
+            resultLabel.setText("• Erreur : " + e.getMessage());
+        }
+    }
+
+    /**
+     * Variante P(x) pour le panneau résultat.
+     */
+    private void calculerPxResultat() {
+        if (dernierResultatStr == null || dernierResultatStr.isEmpty()) {
+            calcPxLabel.setText("• Aucun résultat disponible.");
+            return;
+        }
+        try {
+            Polynome p = new Polynome(dernierResultatStr);
+            double valeurX = Double.parseDouble(calcPxInput.getText().trim());
+            double resultat = p.xEgale(valeurX);
+
+            String affichage = (resultat == Math.floor(resultat) && !Double.isInfinite(resultat))
+                    ? String.valueOf((long) resultat)
+                    : String.valueOf(resultat);
+
+            calcPxLabel.setText("• P(" + valeurX + ") = " + affichage);
+        } catch (NumberFormatException e) {
+            calcPxLabel.setText("• Valeur x invalide (nombre requis).");
+        } catch (IllegalArgumentException e) {
+            calcPxLabel.setText("• Erreur : " + e.getMessage());
+        }
+    }
+
+    // =========================================================
+    //  DÉTAILS TEMPS RÉEL
+    // =========================================================
+
     private void mettreAJourDetailsPoly1() {
-        remplirDetailsMonomes(poly1Input, poly1DerivOrder, poly1DegreeLabel, poly1LimitsLabel, poly1CoeffsLabel);
+        remplirDetailsMonomnes(poly1Input, poly1DerivOrder, poly1DegreeLabel, poly1LimitsLabel, poly1CoeffsLabel);
     }
 
-    /**
-     * Calcule et affiche les propriétés du Polynôme 2.
-     */
     private void mettreAJourDetailsPoly2() {
-        remplirDetailsMonomes(poly2Input, poly2DerivOrder, poly2DegreeLabel, poly2LimitsLabel, poly2CoeffsLabel);
+        remplirDetailsMonomnes(poly2Input, poly2DerivOrder, poly2DegreeLabel, poly2LimitsLabel, poly2CoeffsLabel);
     }
 
-    /**
-     * Centralise la logique d'extraction et de calcul des propriétés pour les colonnes latérales.
-     */
-    private void remplirDetailsMonomes(TextField input, TextField orderInput, Label degLabel, Label limLabel, Label coeffLabel) {
+    private void remplirDetailsMonomnes(TextField input, TextField orderInput,
+                                         Label degLabel, Label limLabel, Label coeffLabel) {
         String texte = input.getText();
         if (texte == null || texte.trim().isEmpty()) {
-            degLabel.setText("• son degrés le plus haut");
-            limLabel.setText("• ses limite (en plus et moins l'infini)");
-            coeffLabel.setText("• ses coefficients");
+            degLabel.setText("• Degrés le plus haut :");
+            limLabel.setText("• Limite (en plus et moins l'infini) :");
+            coeffLabel.setText("• Coefficient :");
             return;
         }
 
         try {
             Polynome p = new Polynome(texte.trim());
-            degLabel.setText("• Degré le plus haut : " + p.MaxDegres());
+            degLabel.setText("• Polynôme canonisé: " + p.toString() + "\n• Degré le plus haut : " + p.MaxDegres());
             limLabel.setText("• Limites : en +∞ : " + p.limite('+') + " | en -∞ : " + p.limite('-'));
 
-            // Récupération de l'ordre de la dérivée
             int ordre = 1;
             String ordreTexte = orderInput.getText();
             if (ordreTexte != null && !ordreTexte.trim().isEmpty()) {
                 try {
                     ordre = Integer.parseInt(ordreTexte.trim());
-                    if (ordre <= 0) ordre = 1; // Sécurité de dérivation
-                } catch (NumberFormatException e) {
-                    // Si l'utilisateur saisit du texte non numérique, on garde 1 par défaut
-                }
+                    if (ordre <= 0) ordre = 1;
+                } catch (NumberFormatException e) { /* garder ordre=1 */ }
             }
-
-            coeffLabel.setText("• Coefficients : " + p.coefficient() + "\n• Dérivée (ordre " + ordre + ") : " + p.derive(ordre));
+            coeffLabel.setText("• Coefficients : " + p.coefficient()
+                    + "\n• Dérivée (ordre " + ordre + ") : " + p.derive(ordre));
         } catch (IllegalArgumentException e) {
             degLabel.setText("• Format invalide");
             limLabel.setText("• Exemple requis : 3x^2+2x-1");
@@ -181,15 +227,17 @@ public class CalculateurController {
         }
     }
 
-    /**
-     * Déclenche le calcul entre le Polynôme 1 et le Polynôme 2 lors du clic sur "effectuer le calcul".
-     */
+    // =========================================================
+    //  CALCUL OPÉRATION
+    // =========================================================
+
     private void gererCalcul() {
         String saisie1 = poly1Input.getText();
         String saisie2 = poly2Input.getText();
 
-        if (saisie1 == null || saisie1.trim().isEmpty() || saisie2 == null || saisie2.trim().isEmpty()) {
-            return; // Saisies incomplètes
+        if (saisie1 == null || saisie1.trim().isEmpty()
+                || saisie2 == null || saisie2.trim().isEmpty()) {
+            return;
         }
 
         try {
@@ -197,18 +245,41 @@ public class CalculateurController {
             Polynome p2 = new Polynome(saisie2.trim());
             operationActuelle = operationSelector.getValue();
 
-            // Rendre visible le conteneur du résultat (gère l'espace avec 'managed')
             calcResultContainer.setVisible(true);
             calcResultContainer.setManaged(true);
 
+            calcPxLabel.setText("• P(x) :");
+
             if ("/".equals(operationActuelle)) {
-                // Gestion spécifique de la division (renvoie un tableau [Quotient, Reste])
-                calcDerivOrder.setDisable(true); // Désactive la dérivée car le résultat comporte deux entités
-                String[] divisionResultat = p1.division(p2);
-                calcDegreeLabel.setText("• Quotient : " + divisionResultat[0]);
-                calcLimitsLabel.setText("• Reste : " + divisionResultat[1]);
-                calcCoeffsLabel.setText("• Opération : Division Euclidienne");
-                dernierResultatStr = "Q: " + divisionResultat[0] + " R: " + divisionResultat[1];
+                calcDerivOrder.setDisable(true);
+                calcDegreeLabel.setText("• Calcul en cours...");
+                calcLimitsLabel.setText("");
+                calcCoeffsLabel.setText("");
+
+                Task<String[]> task = new Task<>() {
+                    @Override
+                    protected String[] call() throws Exception {
+                        return p1.division(p2);
+                    }
+                };
+
+                task.setOnSucceeded(event -> {
+                    String[] divisionResultat = task.getValue();
+                    calcDegreeLabel.setText("• Quotient : " + divisionResultat[0]);
+                    calcLimitsLabel.setText("• Reste : " + divisionResultat[1]);
+                    calcCoeffsLabel.setText("• Opération : Division Euclidienne");
+                    dernierResultatStr = divisionResultat[0]; // on retient le quotient pour P(x)/racines
+                });
+
+                task.setOnFailed(event -> {
+                    Throwable ex = task.getException();
+                    calcDegreeLabel.setText("• Erreur lors du calcul");
+                    calcLimitsLabel.setText("• " + (ex != null ? ex.getMessage() : "Erreur inconnue"));
+                    calcCoeffsLabel.setText("");
+                });
+
+                new Thread(task).start();
+
             } else {
                 calcDerivOrder.setDisable(false);
                 if ("+".equals(operationActuelle)) {
@@ -229,9 +300,6 @@ public class CalculateurController {
         }
     }
 
-    /**
-     * Met à jour l'affichage des propriétés du polynôme obtenu en résultat.
-     */
     private void mettreAJourDetailsResultat() {
         if ("/".equals(operationActuelle) || dernierResultatStr.isEmpty()) {
             return;
@@ -239,8 +307,10 @@ public class CalculateurController {
 
         try {
             Polynome pRes = new Polynome(dernierResultatStr);
-            calcDegreeLabel.setText("• Degré le plus haut : " + pRes.MaxDegres());
-            calcLimitsLabel.setText("• Limites : en +∞ : " + pRes.limite('+') + " | en -∞ : " + pRes.limite('-'));
+            calcDegreeLabel.setText("• Polynome canonisé: " + pRes.toString()
+                    + "\n• Degré le plus haut : " + pRes.MaxDegres());
+            calcLimitsLabel.setText("• Limites : en +∞ : " + pRes.limite('+')
+                    + " | en -∞ : " + pRes.limite('-'));
 
             int ordre = 1;
             String ordreTexte = calcDerivOrder.getText();
@@ -248,11 +318,10 @@ public class CalculateurController {
                 try {
                     ordre = Integer.parseInt(ordreTexte.trim());
                     if (ordre <= 0) ordre = 1;
-                } catch (NumberFormatException e) {
-                    // Reste à 1 si invalide
-                }
+                } catch (NumberFormatException e) { /* garder ordre=1 */ }
             }
-            calcCoeffsLabel.setText("• Coefficients : " + pRes.coefficient() + "\n• Dérivée (ordre " + ordre + ") : " + pRes.derive(ordre));
+            calcCoeffsLabel.setText("• Coefficients : " + pRes.coefficient()
+                    + "\n• Dérivée (ordre " + ordre + ") : " + pRes.derive(ordre));
         } catch (IllegalArgumentException e) {
             calcDegreeLabel.setText("• Polynôme résultant : " + dernierResultatStr);
             calcLimitsLabel.setText("");
@@ -260,11 +329,88 @@ public class CalculateurController {
         }
     }
 
-    /**
-     * Masque le conteneur de résultat lors du clic sur le bouton "retour".
-     */
     private void gererRetour() {
         calcResultContainer.setVisible(false);
         calcResultContainer.setManaged(false);
+        dernierResultatStr = "";
+        operationActuelle = "";
+        calcPxLabel.setText("• P(x) :");
+    }
+
+    // =========================================================
+    //  IMPORTATION / SAUVEGARDE
+    // =========================================================
+
+    /**
+     * Gère l'importation de polynômes depuis un fichier .txt
+     * Format attendu : [polynome1] [polynome2] (séparés par un espace)
+     */
+    private void gererImportation(Stage stage) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Importer des polynômes");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Fichiers texte (*.txt)", "*.txt"));
+
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            try (Scanner scanner = new Scanner(file)) {
+                if (scanner.hasNextLine()) {
+                    String ligne = scanner.nextLine().trim();
+                    if (!ligne.isEmpty()) {
+                        String[] parts = ligne.split("\\s+");
+                        if (parts.length >= 1) {
+                            try {
+                                new Polynome(parts[0]);
+                                poly1Input.setText(parts[0]);
+                                if (parts.length >= 2) {
+                                    new Polynome(parts[1]);
+                                    poly2Input.setText(parts[1]);
+                                } else {
+                                    poly2Input.setText("");
+                                }
+                                System.out.println("Importation réussie.");
+                            } catch (IllegalArgumentException e) {
+                                System.err.println("Format de polynôme invalide dans le fichier.");
+                            }
+                        }
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                System.err.println("Fichier non trouvé : " + e.getMessage());
+            }
+        }
+    }
+
+    private void sauvegarderPolynome(Stage stage, String nomFichierSuggest, String polynome,
+                                      String degre, String limites, String coeffs) {
+        if (polynome == null || polynome.trim().isEmpty()) {
+            System.out.println("Rien à sauvegarder.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Enregistrer le polynôme");
+        fileChooser.setInitialFileName(nomFichierSuggest);
+
+        File dossierInitial = new File(System.getProperty("user.dir") + "/Sauvegarde_Polynome");
+        if (dossierInitial.exists() && dossierInitial.isDirectory()) {
+            fileChooser.setInitialDirectory(dossierInitial);
+        }
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Fichiers texte (*.txt)", "*.txt"));
+
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            try (PrintStream fichier = new PrintStream(file)) {
+                fichier.println(polynome);
+                fichier.println(degre);
+                fichier.println(limites);
+                fichier.println(coeffs);
+                fichier.println("==============================");
+                System.out.println("Sauvegarde réussie dans : " + file.getAbsolutePath());
+            } catch (FileNotFoundException e) {
+                System.err.println("Erreur de sauvegarde : " + e.getMessage());
+            }
+        }
     }
 }

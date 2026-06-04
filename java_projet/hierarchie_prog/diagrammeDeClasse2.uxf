@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1.0">
+  <help_text>TestPolynome
+--
+--
++testConstructeurValide(input : String) : void
++testConstructeurInvalide(input : String) : void
+
++testCanonicalisationTri() : void
++testCanonicalisationSimplification() : void
++testCanonicalisationNul() : void
++testCanonicalisationDejaCanonise() : void
+
++testToString() : void
+
++testGetMonomes() : void
++testGetMonomesX() : void
++testGetMonomesConstante() : void
++testGetMonomesNul() : void
+
++testSetMonomesIndice0() : void
++testSetMonomesDernierIndice() : void
++testSetMonomesHorsBornes() : void
+
++testMaxDegres(poly : String, attendu : int) : void
+
++testCoefficient() : void
++testCoefficientImplicite1() : void
++testCoefficientImpliciteNeg1() : void
+
++testLimite(poly : String,
+            attenduPlus : String,
+            attenduMoins : String) : void
+
++testDeriveAxb() : void
++testDeriveAx() : void
++testDeriveConstante() : void
+
++testAdditionDegreCommun() : void
++testSoustractionDegreCommun() : void
++testMultiplicationStandard() : void
++testDivisionExacte() : void</help_text>
+  <zoom_level>6</zoom_level>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>66</x>
+      <y>48</y>
+      <w>252</w>
+      <h>162</h>
+    </coordinates>
+    <panel_attributes>Polynome
+--
+- monomes : ArrayList&lt;String&gt;
+- polynome : String
+--
++ Polynome(polynome : String)
++ addition(autrePolynome : Polynome) : String
++ soustraction(autrePolynome : Polynome) : String
++ multiplication(autrePolynome : Polynome) : String
++ division(autrePolynome : Polynome) : String[]
++ derive(exposantDerive : int) : ArrayList&lt;String&gt;
++ racine() : ArrayList&lt;Double&gt;
++ limite(limiteChercher : char) : String
++ coefficient() : ArrayList&lt;Integer&gt;
++ MaxDegres() : int
++ getMonomes() : ArrayList&lt;String&gt;
++ setMonomes(monomeAAjouter : String, indiceList : int) : void
++ toString() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>210</x>
+      <y>204</y>
+      <w>30</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>312</x>
+      <y>66</y>
+      <w>72</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;90.0;100.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>96</x>
+      <y>252</y>
+      <w>228</w>
+      <h>234</h>
+    </coordinates>
+    <panel_attributes>TestPolynome
+--
+- p1 : Polynome
+- p2 : Polynome
+- p3 : Polynome
+- pConstante : Polynome
+- pZero : Polynome
+- pX : Polynome
+- pNegX : Polynome
+--
++ init() : void
++ testConstructeurValide(input : String) : void
++ testConstructeurInvalide(input : String) : void
++ testCanonisationEtToString() : void
++ testGetMonomes() : void
++ testSetMonomes() : void
++ testMaxDegres(poly : String, attendu : int) : void
++ testCoefficient() : void
++ testLimite() : void
++ testDerive() : void
++ testAddition() : void
++ testSoustraction() : void
++ testMultiplication() : void
++ testDivision() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>372</x>
+      <y>54</y>
+      <w>144</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Main
+--
+--
++main (args : String[]) : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

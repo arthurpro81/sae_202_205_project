@@ -7,132 +7,321 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" fx:controller="iut.sae.polynome.CalculateurController" prefHeight="700.0" prefWidth="1000.0" spacing="20.0" style="-fx-background-color: #E6E6E6;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label text="Calculateur de polynôme" textAlignment="CENTER">
-         <font>
-            <Font name="System Bold" size="32.0" />
-         </font>
-         <VBox.margin>
-            <Insets top="10.0" />
-         </VBox.margin>
-      </Label>
-      
-      <HBox alignment="TOP_CENTER" spacing="25.0" VBox.vgrow="ALWAYS">
-         <children>
-            
-            <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="15.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <TextField fx:id="poly1Input" alignment="CENTER" promptText="Zone de texte du premier polynome" style="-fx-background-color: #ffe0b2; -fx-border-color: #ffb74d; -fx-padding: 12; -fx-font-weight: bold;" />
-                  
-                  <VBox fx:id="poly1DetailsContainer" spacing="12.0" style="-fx-background-color: #8C8C8C; -fx-padding: 15; -fx-background-radius: 5;" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Label text="Résultat du polynôme de au-dessus :" textFill="WHITE" wrapText="true">
-                           <font><Font name="System Bold" size="13.0" /></font>
-                        </Label>
-                        <Label fx:id="poly1DegreeLabel" text="• son degrés le plus haut" textFill="WHITE" wrapText="true" />
-                        <Label fx:id="poly1LimitsLabel" text="• ses limite (en plus et moins l'infini)" textFill="WHITE" wrapText="true" />
-                        <Label fx:id="poly1CoeffsLabel" text="• ses coefficients" textFill="WHITE" wrapText="true" />
-                        
-                        <HBox alignment="CENTER_LEFT" spacing="8.0">
-                           <children>
-                              <Label text="• ordre de la dérivé (chiffre) :" textFill="WHITE" wrapText="true" />
-                              <TextField fx:id="poly1DerivOrder" alignment="CENTER" prefWidth="50.0" promptText="1" />
-                           </children>
+<VBox alignment="TOP_CENTER" fx:controller="iut.sae.polynome.CalculateurController"
+      prefHeight="900.0" prefWidth="1100.0" spacing="0.0"
+      style="-fx-background-color: #ffffff;"
+      xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+
+        <!-- ===== HEADER ===== -->
+        <HBox alignment="CENTER_LEFT" prefWidth="1100.0"
+              style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
+            <padding><Insets top="14.0" bottom="14.0" left="30.0" right="30.0"/></padding>
+            <children>
+                <HBox alignment="CENTER" prefWidth="42.0" prefHeight="42.0"
+                      style="-fx-background-color: #08c5c5; -fx-background-radius: 10;">
+                    <children>
+                        <Label text="f(x)" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;"/>
+                    </children>
+                </HBox>
+                <Label text="  Calcul de polynôme"
+                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #08c5c5;">
+                    <font><Font name="System Bold" size="20.0"/></font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="importer" mnemonicParsing="false" text="Importer"
+                        style="-fx-background-color: #08c5c5; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 8; -fx-padding: 10 24 10 24; -fx-cursor: hand;"/>
+            </children>
+        </HBox>
+
+        <!-- ===== CORPS PRINCIPAL ===== -->
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+            <padding><Insets top="28.0" bottom="28.0" left="28.0" right="28.0"/></padding>
+            <children>
+
+                <!-- ===== PANNEAU POLYNÔME (gauche) ===== -->
+                <VBox spacing="18.0" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 12; -fx-background-radius: 12;">
+                    <padding><Insets top="22.0" bottom="22.0" left="22.0" right="22.0"/></padding>
+                    <children>
+
+                        <!-- Titre panneau gauche -->
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <HBox alignment="CENTER" prefWidth="34.0" prefHeight="34.0"
+                                      style="-fx-background-color: #08c5c5; -fx-background-radius: 50;">
+                                    <children>
+                                        <Label text="P" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;"/>
+                                    </children>
+                                </HBox>
+                                <Label text="Polynôme"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #08c5c5;">
+                                    <font><Font name="System Bold" size="16.0"/></font>
+                                </Label>
+                            </children>
                         </HBox>
-                        
-                        <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
-                           <children>
-                              <Button fx:id="poly1SaveBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #5c6bc0; -fx-text-fill: white;" text="sauvegarder" />
-                           </children>
+
+                        <!-- Deux colonnes : poly1 | poly2 -->
+                        <HBox spacing="18.0" VBox.vgrow="ALWAYS">
+                            <children>
+
+                                <!-- ===== Colonne Poly 1 ===== -->
+                                <VBox spacing="12.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <TextField fx:id="poly1Input" alignment="CENTER"
+                                                   promptText="ex: 3x^2+2x+1"
+                                                   style="-fx-background-color: #f5f5f5; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10 14 10 14; -fx-font-size: 14px;"/>
+
+                                        <!-- Infos poly1 -->
+                                        <VBox spacing="8.0" VBox.vgrow="ALWAYS"
+                                              style="-fx-background-color: #f9f9f9; -fx-border-color: #e8e8e8; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10;">
+                                            <padding><Insets top="14.0" bottom="14.0" left="14.0" right="14.0"/></padding>
+                                            <children>
+                                                <Label text="Résultat :"
+                                                       style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #08c5c5;">
+                                                    <font><Font name="System Bold" size="13.0"/></font>
+                                                </Label>
+                                                <Label fx:id="poly1DegreeLabel" text="• Degrés le plus haut :"
+                                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                                <Label fx:id="poly1LimitsLabel" text="• Limite (en plus et moins l'infini) :"
+                                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                                <Label fx:id="poly1CoeffsLabel" text="• Coefficient :"
+                                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                                <!-- Dérivé -->
+                                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                                    <children>
+                                                        <Label text="Dérivé (Ordre)"
+                                                               style="-fx-font-size: 12px; -fx-text-fill: #08c5c5;"
+                                                               wrapText="true" HBox.hgrow="ALWAYS"/>
+                                                        <TextField fx:id="poly1DerivOrder" alignment="CENTER"
+                                                                   prefWidth="48.0" promptText="1"
+                                                                   style="-fx-background-color: #e0e0e0; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 12px; -fx-padding: 4 6 4 6;"/>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+
+                                        <!-- Bloc P(x) poly1 -->
+                                        <VBox spacing="6.0"
+                                              style="-fx-background-color: #f0fafa; -fx-border-color: #b2e8e8; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                            <padding><Insets top="10.0" bottom="10.0" left="12.0" right="12.0"/></padding>
+                                            <children>
+                                                <Label text="P(x) — évaluation"
+                                                       style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #08c5c5;">
+                                                    <font><Font name="System Bold" size="12.0"/></font>
+                                                </Label>
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="x ="
+                                                               style="-fx-font-size: 12px; -fx-text-fill: #111111;"/>
+                                                        <TextField fx:id="poly1PxInput" alignment="CENTER"
+                                                                   promptText="ex: 2"
+                                                                   HBox.hgrow="ALWAYS"
+                                                                   style="-fx-background-color: #e8f8f8; -fx-border-color: #b2e8e8; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 12px; -fx-padding: 4 8 4 8;"/>
+                                                        <Button fx:id="poly1PxBtn" text="Calculer"
+                                                                style="-fx-background-color: #08c5c5; -fx-text-fill: white; -fx-font-size: 11px; -fx-background-radius: 6; -fx-padding: 5 10 5 10; -fx-cursor: hand;"/>
+                                                    </children>
+                                                </HBox>
+                                                <Label fx:id="poly1PxLabel" text="• P(x) :"
+                                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                            </children>
+                                        </VBox>
+
+                                        <Button fx:id="poly1SaveBtn" maxWidth="1.7976931348623157E308"
+                                                mnemonicParsing="false" text="Sauvegarder"
+                                                style="-fx-background-color: #08c5c5; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 8; -fx-padding: 8 0 8 0; -fx-cursor: hand;"/>
+                                    </children>
+                                </VBox>
+
+                                <!-- ===== Colonne Poly 2 ===== -->
+                                <VBox spacing="12.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <TextField fx:id="poly2Input" alignment="CENTER"
+                                                   promptText="ex: 15x^2+3x+20"
+                                                   style="-fx-background-color: #f5f5f5; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10 14 10 14; -fx-font-size: 14px;"/>
+
+                                        <!-- Infos poly2 -->
+                                        <VBox spacing="8.0" VBox.vgrow="ALWAYS"
+                                              style="-fx-background-color: #f9f9f9; -fx-border-color: #e8e8e8; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10;">
+                                            <padding><Insets top="14.0" bottom="14.0" left="14.0" right="14.0"/></padding>
+                                            <children>
+                                                <Label text="Résultat :"
+                                                       style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #08c5c5;">
+                                                    <font><Font name="System Bold" size="13.0"/></font>
+                                                </Label>
+                                                <Label fx:id="poly2DegreeLabel" text="• Degrés le plus haut :"
+                                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                                <Label fx:id="poly2LimitsLabel" text="• Limite (en plus et moins l'infini) :"
+                                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                                <Label fx:id="poly2CoeffsLabel" text="• Coefficient :"
+                                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                                <!-- Dérivé -->
+                                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                                    <children>
+                                                        <Label text="Dérivé (Ordre)"
+                                                               style="-fx-font-size: 12px; -fx-text-fill: #08c5c5;"
+                                                               wrapText="true" HBox.hgrow="ALWAYS"/>
+                                                        <TextField fx:id="poly2DerivOrder" alignment="CENTER"
+                                                                   prefWidth="48.0" promptText="1"
+                                                                   style="-fx-background-color: #e0e0e0; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 12px; -fx-padding: 4 6 4 6;"/>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+
+                                        <!-- Bloc P(x) poly2 -->
+                                        <VBox spacing="6.0"
+                                              style="-fx-background-color: #f0fafa; -fx-border-color: #b2e8e8; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                            <padding><Insets top="10.0" bottom="10.0" left="12.0" right="12.0"/></padding>
+                                            <children>
+                                                <Label text="P(x) — évaluation"
+                                                       style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #08c5c5;">
+                                                    <font><Font name="System Bold" size="12.0"/></font>
+                                                </Label>
+                                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="x ="
+                                                               style="-fx-font-size: 12px; -fx-text-fill: #111111;"/>
+                                                        <TextField fx:id="poly2PxInput" alignment="CENTER"
+                                                                   promptText="ex: 2"
+                                                                   HBox.hgrow="ALWAYS"
+                                                                   style="-fx-background-color: #e8f8f8; -fx-border-color: #b2e8e8; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 12px; -fx-padding: 4 8 4 8;"/>
+                                                        <Button fx:id="poly2PxBtn" text="Calculer"
+                                                                style="-fx-background-color: #08c5c5; -fx-text-fill: white; -fx-font-size: 11px; -fx-background-radius: 6; -fx-padding: 5 10 5 10; -fx-cursor: hand;"/>
+                                                    </children>
+                                                </HBox>
+                                                <Label fx:id="poly2PxLabel" text="• P(x) :"
+                                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                            </children>
+                                        </VBox>
+
+                                        <Button fx:id="poly2SaveBtn" maxWidth="1.7976931348623157E308"
+                                                mnemonicParsing="false" text="Sauvegarder"
+                                                style="-fx-background-color: #08c5c5; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 8; -fx-padding: 8 0 8 0; -fx-cursor: hand;"/>
+                                    </children>
+                                </VBox>
+
+                            </children>
+                        </HBox>
+
+                    </children>
+                </VBox>
+
+                <!-- ===== PANNEAU OPÉRATION (droite) ===== -->
+                <VBox spacing="16.0" prefWidth="310.0"
+                      style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 1; -fx-border-radius: 12; -fx-background-radius: 12;">
+                    <padding><Insets top="22.0" bottom="22.0" left="22.0" right="22.0"/></padding>
+                    <children>
+
+                        <!-- Titre panneau droit -->
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <HBox alignment="CENTER" prefWidth="34.0" prefHeight="34.0"
+                                      style="-fx-background-color: #08c5c5; -fx-background-radius: 50;">
+                                    <children>
+                                        <Label text="÷" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+                                    </children>
+                                </HBox>
+                                <Label text="Opération"
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #08c5c5;">
+                                    <font><Font name="System Bold" size="16.0"/></font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- Sélecteur + bouton calcul -->
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <ComboBox fx:id="operationSelector" prefWidth="80.0" promptText="+"
+                                          style="-fx-background-color: #08c5c5; -fx-border-color: #08c5c5; -fx-border-radius: 8; -fx-background-radius: 8;"/>
+                                <Button fx:id="calcBtn" mnemonicParsing="false" text="Effectuer le calcul"
+                                        HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308"
+                                        style="-fx-background-color: #08c5c5; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 8; -fx-padding: 10 16 10 16; -fx-cursor: hand;">
+                                    <font><Font name="System Bold" size="13.0"/></font>
+                                </Button>
+                            </children>
+                        </HBox>
+
+                        <!-- Zone résultat opération -->
+                        <VBox fx:id="calcResultContainer" spacing="8.0" managed="false" visible="false"
+                              VBox.vgrow="ALWAYS"
+                              style="-fx-background-color: #f9f9f9; -fx-border-color: #e8e8e8; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10;">
+                            <padding><Insets top="14.0" bottom="14.0" left="14.0" right="14.0"/></padding>
+                            <children>
+                                <Label text="Résultat :"
+                                       style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #08c5c5;">
+                                    <font><Font name="System Bold" size="13.0"/></font>
+                                </Label>
+                                <Label fx:id="calcDegreeLabel" text="• Degrés le plus haut :"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                <Label fx:id="calcLimitsLabel" text="• Limite (en plus et moins l'infini) :"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                <Label fx:id="calcCoeffsLabel" text="• Coefficient :"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+
+                                <!-- Dérivé résultat -->
+                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                    <children>
+                                        <Label text="Dérivé (Ordre)"
+                                               style="-fx-font-size: 12px; -fx-text-fill: #08c5c5;"
+                                               wrapText="true" HBox.hgrow="ALWAYS"/>
+                                        <TextField fx:id="calcDerivOrder" alignment="CENTER"
+                                                   prefWidth="48.0" promptText="1"
+                                                   style="-fx-background-color: #e0e0e0; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 12px; -fx-padding: 4 6 4 6;"/>
+                                    </children>
+                                </HBox>
+
+                                <!-- Bloc P(x) résultat -->
+                                <VBox spacing="6.0"
+                                      style="-fx-background-color: #e8f8f8; -fx-border-color: #b2e8e8; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-radius: 8;">
+                                    <padding><Insets top="8.0" bottom="8.0" left="10.0" right="10.0"/></padding>
+                                    <children>
+                                        <Label text="P(x) — évaluation"
+                                               style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #08c5c5;">
+                                            <font><Font name="System Bold" size="12.0"/></font>
+                                        </Label>
+                                        <HBox spacing="6.0" alignment="CENTER_LEFT">
+                                            <children>
+                                                <Label text="x ="
+                                                       style="-fx-font-size: 12px; -fx-text-fill: #111111;"/>
+                                                <TextField fx:id="calcPxInput" alignment="CENTER"
+                                                           promptText="ex: 2"
+                                                           HBox.hgrow="ALWAYS"
+                                                           style="-fx-background-color: #ffffff; -fx-border-color: #b2e8e8; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 12px; -fx-padding: 4 8 4 8;"/>
+                                                <Button fx:id="calcPxBtn" text="Calculer"
+                                                        style="-fx-background-color: #08c5c5; -fx-text-fill: white; -fx-font-size: 11px; -fx-background-radius: 6; -fx-padding: 5 10 5 10; -fx-cursor: hand;"/>
+                                            </children>
+                                        </HBox>
+                                        <Label fx:id="calcPxLabel" text="• P(x) :"
+                                               style="-fx-font-size: 12px; -fx-text-fill: #111111;" wrapText="true"/>
+                                    </children>
+                                </VBox>
+
+                            </children>
                         </VBox>
-                     </children>
-                  </VBox>
-               </children>
-            </VBox>
-            
-            <VBox alignment="TOP_CENTER" prefWidth="320.0" spacing="15.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <VBox alignment="CENTER" spacing="10.0">
-                     <children>
-                        <ComboBox fx:id="operationSelector" prefWidth="80.0" promptText="+" style="-fx-background-color: #c8e6c9; -fx-border-color: #81c784; -fx-alignment: center;" />
-                        <Button fx:id="calcBtn" mnemonicParsing="false" style="-fx-background-color: #a5d6a7; -fx-padding: 10 20 10 20; -fx-font-weight: bold;" text="effectuer le calcul" />
-                     </children>
-                  </VBox>
-                  
-                  <VBox fx:id="calcResultContainer" managed="false" spacing="12.0" style="-fx-background-color: #8C8C8C; -fx-padding: 15; -fx-background-radius: 5;" visible="false" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-background-color: #ba68c8; -fx-padding: 8; -fx-background-radius: 3;" text="Donne le résultat du clacul entre 2 polynome" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-                           <font><Font name="System Bold" size="12.0" /></font>
-                        </Label>
-                        
-                        <Label fx:id="calcDegreeLabel" text="• son degrés le plus haut" textFill="WHITE" wrapText="true" />
-                        <Label fx:id="calcLimitsLabel" text="• ses limite (en plus et moins l'infini)" textFill="WHITE" wrapText="true" />
-                        <Label fx:id="calcCoeffsLabel" text="• ses coefficients" textFill="WHITE" wrapText="true" />
-                        
-                        <HBox alignment="CENTER_LEFT" spacing="8.0">
-                           <children>
-                              <Label text="• ordre de la dérivé (chiffre) :" textFill="WHITE" wrapText="true" />
-                              <TextField fx:id="calcDerivOrder" alignment="CENTER" prefWidth="50.0" promptText="1" />
-                           </children>
+
+                        <Region VBox.vgrow="ALWAYS"/>
+
+                        <!-- Boutons bas -->
+                        <HBox spacing="8.0">
+                            <children>
+                                <Button fx:id="calcSaveBtn" mnemonicParsing="false" text="Sauvegarder"
+                                        HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308"
+                                        style="-fx-background-color: #08c5c5; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 8; -fx-padding: 8 0 8 0; -fx-cursor: hand;"/>
+                                <Button fx:id="backBtn" mnemonicParsing="false" text="Effacer"
+                                        style="-fx-background-color: #ff5252; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 8; -fx-padding: 8 14 8 14; -fx-cursor: hand;"/>
+                            </children>
                         </HBox>
-                        
-                        <HBox alignment="BOTTOM_RIGHT" spacing="10.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <Button fx:id="calcSaveBtn" mnemonicParsing="false" style="-fx-background-color: #5c6bc0; -fx-text-fill: white;" text="sauvegarder" />
-                              <Button fx:id="backBtn" mnemonicParsing="false" style="-fx-background-color: #ef5350; -fx-text-fill: white;" text="retour" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </children>
-            </VBox>
-            
-            <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="15.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <TextField fx:id="poly2Input" alignment="CENTER" promptText="Zone de texte du deuxième polynome" style="-fx-background-color: #ffe0b2; -fx-border-color: #ffb74d; -fx-padding: 12; -fx-font-weight: bold;" />
-                  
-                  <VBox fx:id="poly2DetailsContainer" spacing="12.0" style="-fx-background-color: #8C8C8C; -fx-padding: 15; -fx-background-radius: 5;" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Label text="Résultat du polynôme de au-dessus :" textFill="WHITE" wrapText="true">
-                           <font><Font name="System Bold" size="13.0" /></font>
-                        </Label>
-                        <Label fx:id="poly2DegreeLabel" text="• son degrés le plus haut" textFill="WHITE" wrapText="true" />
-                        <Label fx:id="poly2LimitsLabel" text="• ses limite (en plus et moins l'infini)" textFill="WHITE" wrapText="true" />
-                        <Label fx:id="poly2CoeffsLabel" text="• ses coefficients" textFill="WHITE" wrapText="true" />
-                        
-                        <HBox alignment="CENTER_LEFT" spacing="8.0">
-                           <children>
-                              <Label text="• ordre de la dérivé (chiffre) :" textFill="WHITE" wrapText="true" />
-                              <TextField fx:id="poly2DerivOrder" alignment="CENTER" prefWidth="50.0" promptText="1" />
-                           </children>
-                        </HBox>
-                        
-                        <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
-                           <children>
-                              <Button fx:id="poly2SaveBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #5c6bc0; -fx-text-fill: white;" text="sauvegarder" />
-                           </children>
-                        </VBox>
-                     </children>
-                  </VBox>
-               </children>
-            </VBox>
-            
-         </children>
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
-         </padding>
-      </HBox>
-      <VBox alignment="CENTER" prefHeight="0.0" prefWidth="1000.0">
-         <children>
-            <Button fx:id="importer" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="905.0" style="-fx-background-color: #5c6bc0; -fx-text-fill: white;" text="importer">
-               <VBox.margin>
-                  <Insets left="400.0" right="400.0" />
-               </VBox.margin>
-            </Button>
-         </children>
-      </VBox>
-   </children>
+
+                    </children>
+                </VBox>
+
+            </children>
+        </HBox>
+
+    </children>
 </VBox>
